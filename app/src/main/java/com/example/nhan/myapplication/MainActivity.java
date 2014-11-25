@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nhan.myapplication.SQLite.DAL;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -174,6 +175,10 @@ public class MainActivity extends FragmentActivity implements
         super.onStart();
         // Connect the client.
         //mLocationClient.connect();
+        DAL db = new DAL(this);
+
+        db.WriteLog();
+/*
         Intent mIntent = getIntent();
         String probablyActivity = mIntent.getStringExtra("probableActivity");
 
@@ -184,6 +189,7 @@ public class MainActivity extends FragmentActivity implements
             Log.d("DriveSafe", "Probably activity is: " + probablyActivity);
             WriteStatus(probablyActivity);
         }
+        */
     }
 
     /*
@@ -392,7 +398,7 @@ public class MainActivity extends FragmentActivity implements
 
     public void toggleSilentRingerMode(View view)
     {
-        AudioManager audioManager;
+        /*AudioManager audioManager;
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
        if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT)
@@ -404,6 +410,8 @@ public class MainActivity extends FragmentActivity implements
        {
            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
            Toast.makeText(this, "Ringer Mode - Normal", Toast.LENGTH_SHORT).show();
-       }
+       }*/
+        Intent dbmanager = new Intent(this,AndroidDatabaseManager.class);
+        startActivity(dbmanager);
     }
 }
