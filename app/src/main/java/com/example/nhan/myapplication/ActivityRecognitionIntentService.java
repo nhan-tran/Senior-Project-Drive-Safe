@@ -22,7 +22,7 @@ public class ActivityRecognitionIntentService extends IntentService {
     }
     public ActivityRecognitionIntentService()
     {
-        super("default");
+        super("ActivityRecognitionIntentService");
     }
     /**
      * Called when a new activity detection update is available.

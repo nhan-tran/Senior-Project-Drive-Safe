@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -165,8 +167,8 @@ public class MainActivity extends FragmentActivity implements
 
     }
     /*
- * Called when the Activity becomes visible.
- */
+     * Called when the Activity becomes visible.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -194,13 +196,17 @@ public class MainActivity extends FragmentActivity implements
         super.onStop();
     }
 
+    protected void onDestroy()
+    {
+        super.onDestroy();
+    }
+
     @Override
     public void onConnected(Bundle dataBundle) {
         // Display the connection status
-
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
         switch (mRequestType) {
             case START :
+                Toast.makeText(this, "Connected to Start", Toast.LENGTH_SHORT).show();
                 /*
                  * Request activity recognition updates using the
                  * preset detection interval and PendingIntent.
@@ -211,6 +217,7 @@ public class MainActivity extends FragmentActivity implements
                         mActivityRecognitionPendingIntent);
                 break;
             case STOP :
+                Toast.makeText(this, "Connected to Stop", Toast.LENGTH_SHORT).show();
                 mActivityRecognitionClient.removeActivityUpdates(
                         mActivityRecognitionPendingIntent);
                 break;
@@ -381,5 +388,22 @@ public class MainActivity extends FragmentActivity implements
                     // http://stackoverflow.com/a/16850856
             return false;
         }
+    }
+
+    public void toggleSilentRingerMode(View view)
+    {
+        AudioManager audioManager;
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+
+       if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT)
+       {
+           audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+           Toast.makeText(this, "Ringer Mode - Silent", Toast.LENGTH_SHORT).show();
+       }
+       else
+       {
+           audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+           Toast.makeText(this, "Ringer Mode - Normal", Toast.LENGTH_SHORT).show();
+       }
     }
 }

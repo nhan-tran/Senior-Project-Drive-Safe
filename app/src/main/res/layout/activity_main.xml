@@ -10,20 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <EditText android:id="@+id/edit_message"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/edit_message"
-            android:visibility="invisible" />
 
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_send"
-            android:onClick="sendMessage"
-            android:visibility="invisible" />
     </LinearLayout>
 
     <RelativeLayout
@@ -33,7 +21,7 @@
         <Button android:id="@+id/btn_activity_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/get_status"
+            android:text="Start Monitoring"
             android:onClick="getStatus"
             android:layout_centerHorizontal="false" />
 
@@ -52,17 +40,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_below="@+id/et_status_message"/>
+            android:layout_below="@+id/et_status_message"
+            android:layout_above="@+id/btn_silent" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stop Updates"
+            android:text="Stop Monitoring"
             android:id="@+id/btn_stop_updates"
             android:onClick="stopActivityUpdates"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ring Silent"
+            android:id="@+id/btn_silent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:onClick="toggleSilentRingerMode" />
     </RelativeLayout>
 
 </LinearLayout> <!--Parent-->
