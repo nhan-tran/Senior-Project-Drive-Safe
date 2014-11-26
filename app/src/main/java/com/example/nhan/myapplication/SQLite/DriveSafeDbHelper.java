@@ -16,20 +16,24 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INT_TYPE = " INTEGER";
+    private static final String REAL_TYPE = "REAL";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + DrivingDataContract.DrivingEntry.TABLE_NAME + " (" +
                     DrivingDataContract.DrivingEntry._ID + " INTEGER PRIMARY KEY," +
                     DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_ACTIVITY_STATUS  + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_CREATED_DATE + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_MPH + INT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_COORDINATE + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_CREATED_TIME + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_DIRECTION + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_USER_ID + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_SYNCED + INT_TYPE + COMMA_SEP +
-                    DrivingDataContract.DrivingEntry. COLUMN_NAME_HAS_LOCATION + INT_TYPE  +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_ACTIVITY_STATUS  + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_CREATED_DATE + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_SPEED + REAL_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_LATITUDE + REAL_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_LONGITUDE + REAL_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_LOCATION_TIME + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_USER_ID + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_SYNCED + INT_TYPE + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_HAS_LOCATION + INT_TYPE  + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_BEARING + REAL_TYPE  + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_ACCURACY + REAL_TYPE  + COMMA_SEP +
+                    DrivingDataContract.DrivingEntry.COLUMN_NAME_CONFIDENCE + INT_TYPE  +
             " )";
 
     private static final String SQL_DELETE_ENTRIES =
@@ -66,7 +70,6 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
         MatrixCursor Cursor2= new MatrixCursor(columns);
         alc.add(null);
         alc.add(null);
-
 
         try{
             String maxQuery = Query ;

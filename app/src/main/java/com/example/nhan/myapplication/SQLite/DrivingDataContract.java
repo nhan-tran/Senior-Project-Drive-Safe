@@ -17,12 +17,17 @@ public class DrivingDataContract {
         public static final String COLUMN_NAME_ENTRY_ID = "DS_ID";
         public static final String COLUMN_NAME_ACTIVITY_STATUS = "ACTIVITY_STATUS";
         public static final String COLUMN_NAME_CREATED_DATE = "CREATED_DATE";
-        public static final String COLUMN_NAME_MPH = "MPH";
-        public static final String COLUMN_NAME_COORDINATE = "COORDINATE";
-        public static final String COLUMN_NAME_CREATED_TIME = "CREATED_TIME";
-        public static final String COLUMN_NAME_DIRECTION = "DIRECTION";
+        public static final String COLUMN_NAME_SPEED = "SPEED";
+        public static final String COLUMN_NAME_CONFIDENCE = "CONFIDENCE";
+        public static final String COLUMN_NAME_LONGITUDE = "LONGITUDE";
+        public static final String COLUMN_NAME_LATITUDE = "LATITUDE";
+        public static final String COLUMN_NAME_LOCATION_TIME = "LOCATION_TIME";
+        public static final String COLUMN_NAME_BEARING = "BEARING";
         public static final String COLUMN_NAME_USER_ID = "USER_ID";
         public static final String COLUMN_NAME_SYNCED = "SYNCED";
         public static final String COLUMN_NAME_HAS_LOCATION = "HAS_LOCATION";
+        public static final String COLUMN_NAME_ACCURACY = "ACCURACY";
+        //public static final String COLUMN_NAME_SYNCED = "SYNCED";
+        //public static final String COLUMN_NAME_SYNCED = "SYNCED";
     }
 }

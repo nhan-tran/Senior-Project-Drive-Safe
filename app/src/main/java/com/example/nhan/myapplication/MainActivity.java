@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -61,12 +62,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-         * Create a new location client, using the enclosing class to
-         * handle callbacks.
-         */
-        //mCurrentLocation = new Location();
-        //mLocationClient = new LocationClient(this, this, this);
+
         /*Intent mIntent = getIntent();
         String probablyActivity = mIntent.getStringExtra("probableActivity");
 
@@ -177,7 +173,8 @@ public class MainActivity extends FragmentActivity implements
         //mLocationClient.connect();
         DAL db = new DAL(this);
 
-        db.WriteLog();
+
+        db.WriteLog(new ContentValues());
 /*
         Intent mIntent = getIntent();
         String probablyActivity = mIntent.getStringExtra("probableActivity");

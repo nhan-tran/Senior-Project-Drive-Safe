@@ -5,21 +5,24 @@ package com.example.nhan.myapplication;
  */
 
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.location.Location;
 
+import com.example.nhan.myapplication.SQLite.DAL;
+import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Service that receives ActivityRecognition updates. It receives
  * updates in the background, even if the main Activity is not visible.
  */
 public class ActivityRecognitionIntentService extends IntentService {
-
-    public ActivityRecognitionIntentService(String name)
-    {
-        super(name);
-    }
     public ActivityRecognitionIntentService()
     {
         super("ActivityRecognitionIntentService");
@@ -39,6 +42,10 @@ public class ActivityRecognitionIntentService extends IntentService {
             // Get the most probable activity
             DetectedActivity mostProbableActivity =
                     result.getMostProbableActivity();
+
+            // Write this to the db
+            logActivity(mostProbableActivity);
+
             /*
              * Get the probability that this activity is the
              * the user's actual activity
@@ -47,8 +54,8 @@ public class ActivityRecognitionIntentService extends IntentService {
             /*
              * Get an integer describing the type of activity
              */
-            int activityType = mostProbableActivity.getType();
-            String activityName = getNameFromType(activityType);
+            //int activityType = mostProbableActivity.getType();
+            //String activityName = getNameFromType(activityType);
             /*
              * At this point, you have retrieved all the information
              * for the current update. You can display this
@@ -59,9 +66,9 @@ public class ActivityRecognitionIntentService extends IntentService {
 
             // send the DetectedActivity back to Main
             //return mostProbableActivity;
-            sendIntent.putExtra("probableActivity", activityName);
-            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //http://stackoverflow.com/questions/3606596/android-start-activity-from-service
-            startActivity(sendIntent);
+            //sendIntent.putExtra("probableActivity", activityName);
+            //sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //http://stackoverflow.com/questions/3606596/android-start-activity-from-service
+            //startActivity(sendIntent);
         } else {
             /*
              * This implementation ignores intents that don't contain
@@ -69,10 +76,40 @@ public class ActivityRecognitionIntentService extends IntentService {
              * errors.
              */
         }
-
-
-
     }
+
+    private void logActivity(DetectedActivity activity){
+        DAL dal = new DAL(this);
+        LocationManager locationManager = new LocationManager(this);
+
+        int confidence = activity.getConfidence();
+        int activityType = activity.getType();
+        String activityName = getNameFromType(activityType);
+
+        Location currentLocation = locationManager.getLocation();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        // Create a new map of values, where column names are the keys
+
+        ContentValues values = new ContentValues();
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID, "testId");
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACTIVITY_STATUS, activityName);
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SPEED, currentLocation.getSpeed());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_BEARING, currentLocation.getBearing());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_USER_ID, "testUserId");
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SYNCED, 0);
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CONFIDENCE, confidence);
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
+
+        dal.WriteLog(new ContentValues());
+    }
+
 
     /**
      * Map detected activity types to strings
@@ -93,6 +130,10 @@ public class ActivityRecognitionIntentService extends IntentService {
                 return "unknown";
             case DetectedActivity.TILTING:
                 return "tilting";
+            case DetectedActivity.RUNNING:
+                return "running";
+            case DetectedActivity.WALKING:
+                return "walking";
         }
         return "unknown";
     }
