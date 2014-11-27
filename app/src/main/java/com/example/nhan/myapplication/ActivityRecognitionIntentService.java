@@ -36,7 +36,7 @@ public class ActivityRecognitionIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         //Intent sendIntent = new Intent(this, MainActivity.class);
-        mLocationManager = new LocationManager(this);
+
 
         // If the incoming intent contains an update
         if (ActivityRecognitionResult.hasResult(intent)) {
@@ -47,8 +47,9 @@ public class ActivityRecognitionIntentService extends IntentService {
             DetectedActivity mostProbableActivity =
                     result.getMostProbableActivity();
 
+            mLocationManager = new LocationManager(this, mostProbableActivity);
             // Write this to the db
-            logActivity(mostProbableActivity);
+            //logActivity(mostProbableActivity);
         } else {
             /*
              * This implementation ignores intents that don't contain
