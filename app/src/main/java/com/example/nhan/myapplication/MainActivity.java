@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nhan.myapplication.SQLite.DAL;
+import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -62,20 +63,6 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*Intent mIntent = getIntent();
-        String probablyActivity = mIntent.getStringExtra("probableActivity");
-
-        // let's see if something is in here!
-        if (probablyActivity != null)
-        {
-            // got a winner!
-            Log.d("DriveSafe", "Probably activity is: " + probablyActivity);
-            WriteStatus(probablyActivity);
-        }
-        */
-
-
         setContentView(R.layout.activity_main);
         mInProgress = false;
 
@@ -161,7 +148,6 @@ public class MainActivity extends FragmentActivity implements
             mActivityRecognitionClient.disconnect();
             mActivityRecognitionClient.connect();
         }
-
     }
     /*
      * Called when the Activity becomes visible.
@@ -169,24 +155,6 @@ public class MainActivity extends FragmentActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        // Connect the client.
-        //mLocationClient.connect();
-        DAL db = new DAL(this);
-
-
-        db.WriteLog(new ContentValues());
-/*
-        Intent mIntent = getIntent();
-        String probablyActivity = mIntent.getStringExtra("probableActivity");
-
-        // let's see if something is in here!
-        if (probablyActivity != null)
-        {
-            // got a winner!
-            Log.d("DriveSafe", "Probably activity is: " + probablyActivity);
-            WriteStatus(probablyActivity);
-        }
-        */
     }
 
     /*
@@ -320,6 +288,35 @@ public class MainActivity extends FragmentActivity implements
                 //"\nLocation object info:\n" + location +
                 "\nUpdated: " + dateFormat.format(date));
     }
+
+    public void insertRow(View view)
+    {
+        DAL db = new DAL(this);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        // Create a new map of values, where column names are the keys
+        Location currentLocation = new Location("kd");
+        ContentValues values = new ContentValues();
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID, "testId");
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACTIVITY_STATUS, "test");
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SPEED, currentLocation.getSpeed());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_BEARING, currentLocation.getBearing());
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_USER_ID, "testUserId");
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SYNCED, 0);
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CONFIDENCE, 55.55);
+        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
+
+        db.WriteLog(values);
+
+        Toast.makeText(this, "Row created", Toast.LENGTH_SHORT).show();
+    }
+
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog

@@ -23,6 +23,9 @@ import java.util.Date;
  * updates in the background, even if the main Activity is not visible.
  */
 public class ActivityRecognitionIntentService extends IntentService {
+
+    LocationManager mLocationManager;
+
     public ActivityRecognitionIntentService()
     {
         super("ActivityRecognitionIntentService");
@@ -32,7 +35,8 @@ public class ActivityRecognitionIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        Intent sendIntent = new Intent(this, MainActivity.class);
+        //Intent sendIntent = new Intent(this, MainActivity.class);
+        mLocationManager = new LocationManager(this);
 
         // If the incoming intent contains an update
         if (ActivityRecognitionResult.hasResult(intent)) {
@@ -45,30 +49,6 @@ public class ActivityRecognitionIntentService extends IntentService {
 
             // Write this to the db
             logActivity(mostProbableActivity);
-
-            /*
-             * Get the probability that this activity is the
-             * the user's actual activity
-             */
-            int confidence = mostProbableActivity.getConfidence();
-            /*
-             * Get an integer describing the type of activity
-             */
-            //int activityType = mostProbableActivity.getType();
-            //String activityName = getNameFromType(activityType);
-            /*
-             * At this point, you have retrieved all the information
-             * for the current update. You can display this
-             * information to the user in a notification, or
-             * send it to an Activity or Service in a broadcast
-             * Intent.
-             */
-
-            // send the DetectedActivity back to Main
-            //return mostProbableActivity;
-            //sendIntent.putExtra("probableActivity", activityName);
-            //sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //http://stackoverflow.com/questions/3606596/android-start-activity-from-service
-            //startActivity(sendIntent);
         } else {
             /*
              * This implementation ignores intents that don't contain
@@ -80,20 +60,18 @@ public class ActivityRecognitionIntentService extends IntentService {
 
     private void logActivity(DetectedActivity activity){
         DAL dal = new DAL(this);
-        LocationManager locationManager = new LocationManager(this);
-
         int confidence = activity.getConfidence();
         int activityType = activity.getType();
         String activityName = getNameFromType(activityType);
 
-        Location currentLocation = locationManager.getLocation();
+        Location currentLocation = mLocationManager.getLocation();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         // Create a new map of values, where column names are the keys
 
         ContentValues values = new ContentValues();
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID, "testId");
+        //values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID, "testId");
         values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACTIVITY_STATUS, activityName);
         values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
         values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SPEED, currentLocation.getSpeed());
@@ -107,7 +85,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CONFIDENCE, confidence);
         values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
 
-        dal.WriteLog(new ContentValues());
+        dal.WriteLog(values);
     }
 
 
@@ -137,5 +115,4 @@ public class ActivityRecognitionIntentService extends IntentService {
         }
         return "unknown";
     }
-
 }

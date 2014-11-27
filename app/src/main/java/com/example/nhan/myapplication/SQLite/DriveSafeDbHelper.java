@@ -16,7 +16,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INT_TYPE = " INTEGER";
-    private static final String REAL_TYPE = "REAL";
+    private static final String REAL_TYPE = " REAL";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + DrivingDataContract.DrivingEntry.TABLE_NAME + " (" +
@@ -40,7 +40,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + DrivingDataContract.DrivingEntry.TABLE_NAME;
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "DRIVE_SAFE_DEV.db";
 
     public DriveSafeDbHelper(Context context) {
