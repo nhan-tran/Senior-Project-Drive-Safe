@@ -4,12 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.nhan.myapplication.MainActivity;
-import com.example.nhan.myapplication.SQLite.DrivingDataContract.DrivingEntry;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.example.nhan.myapplication.SQLite.DrivingDataContract.LOCATION_LOG;
 
 /**
  * Created by Nhan on 11/24/2014.
@@ -34,7 +29,7 @@ public class DAL {
             // Insert the new row, returning the primary key value of the new row
             long newRowId;
             newRowId = db.insert(
-                    DrivingEntry.TABLE_NAME,
+                    LOCATION_LOG.TABLE_NAME,
                     null,
                     values);
         }

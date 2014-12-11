@@ -1,6 +1,5 @@
 package com.example.nhan.myapplication;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.location.Location;
@@ -10,11 +9,8 @@ import android.util.Log;
 import com.example.nhan.myapplication.SQLite.DAL;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.DetectedActivity;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationServices;
 
 import java.text.DateFormat;
@@ -86,19 +82,19 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
             ContentValues values = new ContentValues();
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
-            //values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID, "testId");
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACTIVITY_STATUS, activityName);
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SPEED, currentLocation.getSpeed());
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_BEARING, currentLocation.getBearing());
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_USER_ID, "testUserId");
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SYNCED, 0);
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CONFIDENCE, confidence);
-            values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
+            //values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ENTRY_ID, "testId");
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACTIVITY_STATUS, activityName);
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED, currentLocation.getSpeed());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING, currentLocation.getBearing());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, "testUserId");
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED, 0);
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CONFIDENCE, confidence);
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
 
             dal.WriteLog(values);
         }

@@ -43,13 +43,8 @@ public class ActivityRecognitionIntentService extends IntentService {
             // Get the update
             ActivityRecognitionResult result =
                     ActivityRecognitionResult.extractResult(intent);
-            // Get the most probable activity
-            DetectedActivity mostProbableActivity =
-                    result.getMostProbableActivity();
 
-            mLocationManager = new LocationManager(this, mostProbableActivity);
-            // Write this to the db
-            //logActivity(mostProbableActivity);
+
         } else {
             /*
              * This implementation ignores intents that don't contain
@@ -59,34 +54,14 @@ public class ActivityRecognitionIntentService extends IntentService {
         }
     }
 
-    private void logActivity(DetectedActivity activity){
-        DAL dal = new DAL(this);
-        int confidence = activity.getConfidence();
-        int activityType = activity.getType();
-        String activityName = getNameFromType(activityType);
 
-        Location currentLocation = mLocationManager.getLocation();
+    public void ActivityDeterminator(ActivityRecognitionResult result)
+    {
+        // Get the most probable activity
+        DetectedActivity mostProbableActivity =
+                result.getMostProbableActivity();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        // Create a new map of values, where column names are the keys
-
-        ContentValues values = new ContentValues();
-        //values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID, "testId");
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACTIVITY_STATUS, activityName);
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SPEED, currentLocation.getSpeed());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_BEARING, currentLocation.getBearing());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_USER_ID, "testUserId");
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SYNCED, 0);
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CONFIDENCE, confidence);
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
-
-        dal.WriteLog(values);
+        String activityName = getNameFromType(mostProbableActivity.getType());
     }
 
 

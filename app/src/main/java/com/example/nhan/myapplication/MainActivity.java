@@ -5,11 +5,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -297,19 +295,19 @@ public class MainActivity extends FragmentActivity implements
         // Create a new map of values, where column names are the keys
         Location currentLocation = new Location("kd");
         ContentValues values = new ContentValues();
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ENTRY_ID, "testId");
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACTIVITY_STATUS, "test");
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SPEED, currentLocation.getSpeed());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_BEARING, currentLocation.getBearing());
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_USER_ID, "testUserId");
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_SYNCED, 0);
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_CONFIDENCE, 55.55);
-        values.put(DrivingDataContract.DrivingEntry.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ENTRY_ID, "testId");
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACTIVITY_STATUS, "test");
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED, currentLocation.getSpeed());
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING, currentLocation.getBearing());
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, "testUserId");
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED, 0);
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CONFIDENCE, 55.55);
+        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
 
         db.WriteLog(values);
 

@@ -12,8 +12,8 @@ public class DrivingDataContract {
     // prevent accidental initialization of this class by creating empty constructor
     public DrivingDataContract(){};
 
-    public static abstract class DrivingEntry implements BaseColumns{
-        public static final String TABLE_NAME = "DRIVE_LOG";
+    public static abstract class LOCATION_LOG implements BaseColumns{
+        public static final String TABLE_NAME = "LOCATION_LOG";
         public static final String COLUMN_NAME_ENTRY_ID = "DS_ID";
         public static final String COLUMN_NAME_ACTIVITY_STATUS = "ACTIVITY_STATUS";
         public static final String COLUMN_NAME_CREATED_DATE = "CREATED_DATE";
@@ -29,5 +29,11 @@ public class DrivingDataContract {
         public static final String COLUMN_NAME_ACCURACY = "ACCURACY";
         //public static final String COLUMN_NAME_SYNCED = "SYNCED";
         //public static final String COLUMN_NAME_SYNCED = "SYNCED";
+    }
+
+    public static abstract class SESSION_ACTIVITIES implements BaseColumns{
+        public static final String TABLE_NAME = "SESSION_ACTIVITIES";
+        public static final String COLUMN_NAME_ACTIVITY_STATUS = "ACTIVITY_STATUS";
+        public static final String COLUMN_NAME_CREATED_DATE = "CREATED_DATE";
     }
 }
