@@ -7,6 +7,7 @@ package com.example.nhan.myapplication;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 
 import com.example.nhan.myapplication.SQLite.DAL;
@@ -25,10 +26,12 @@ import java.util.Date;
 public class ActivityRecognitionIntentService extends IntentService {
 
     LocationManager mLocationManager;
+    DAL db;
 
     public ActivityRecognitionIntentService()
     {
         super("ActivityRecognitionIntentService");
+        db = new DAL(this);
     }
     /**
      * Called when a new activity detection update is available.
@@ -55,21 +58,63 @@ public class ActivityRecognitionIntentService extends IntentService {
     }
 
 
-    public void ActivityDeterminator(ActivityRecognitionResult result)
-    {
-        // Get the most probable activity
-        DetectedActivity mostProbableActivity =
-                result.getMostProbableActivity();
+    public void ActivityDeterminator(ActivityRecognitionResult result) {
+        int previousActivityType = DetectedActivity.UNKNOWN;    // set default last activity to UNKNOWN
+        Boolean isDrivingForSure = true;   // refactor this to Shared Preferences later
 
-        String activityName = getNameFromType(mostProbableActivity.getType());
+        // Get the most probable activity
+        DetectedActivity newestActivity = result.getMostProbableActivity();
+
+        // check for confidence level
+        if (newestActivity.getConfidence() < 50) {
+            // if the confidence is less than 50 we will not accept it
+            newestActivity = new DetectedActivity(DetectedActivity.UNKNOWN, 100);
+        }
+
+        // get latest/last activity logged
+        Cursor cursor = db.LatestSessionActivities();
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+            previousActivityType = cursor.getInt(2);    // get the last activity type
+        }
+        cursor.close();
+
+        if (newestActivity.getType() == DetectedActivity.IN_VEHICLE) {
+            if (previousActivityType == DetectedActivity.IN_VEHICLE && !isDrivingForSure) {
+                // the shift has happen! We went from something to now detected in_vehicle twice
+
+            } else {
+                // either the previous activity was not in_vehicle or we are already isDrivingForSure (so we're already logging)
+            }
+        } else if (isDrivingForSure)  // isDrivingForSure is true so we're logging but this newestActivity is not in_vehicle
+        {
+            if (previousActivityType != DetectedActivity.IN_VEHICLE) {
+                // if the previousActivity was also not in_vehicle then we have detect two activities where it's not in_vehicle so turn off location logging
+
+            }
+
+        }
+        else {
+            // don't really need this else since all it needs to do is log the newestActivity which we'll do anyways at the bottom
+        }
+
+        // Log the newest activity
+        ContentValues values = new ContentValues();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_ACTIVITY_STATUS, getNameFromType(newestActivity.getType()));
+        values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_ACTIVITY_TYPE, newestActivity.getType());
+        values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
+        values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_CONFIDENCE, newestActivity.getConfidence());
+
+        db.InsertSessionActivity(values);
     }
 
-
-    /**
-     * Map detected activity types to strings
-     *@param activityType The detected activity type
-     *@return A user-readable name for the type
-     */
+        /**
+         * Map detected activity types to strings
+         *@param activityType The detected activity type
+         *@return A user-readable name for the type
+         */
     private String getNameFromType(int activityType) {
         switch(activityType) {
             case DetectedActivity.IN_VEHICLE:
