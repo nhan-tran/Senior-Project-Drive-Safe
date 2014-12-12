@@ -38,6 +38,9 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME + " (" +
                     DrivingDataContract.SESSION_ACTIVITIES._ID + " INTEGER PRIMARY KEY," +
                     DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_ACTIVITY_STATUS + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_ACTIVITY_TYPE + INT_TYPE + COMMA_SEP +
+                    DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_CONFIDENCE + INT_TYPE + COMMA_SEP +
+                    DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_IS_DRIVING + INT_TYPE + COMMA_SEP +
                     DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_CREATED_DATE + TEXT_TYPE + " )";
 
 

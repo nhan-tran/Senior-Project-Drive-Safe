@@ -27,6 +27,7 @@ public class ActivityRecognitionIntentService extends IntentService {
 
     LocationManager mLocationManager;
     DAL db;
+    static final int MIN_CONFIDENCE_LVL = 50;
 
     public ActivityRecognitionIntentService()
     {
@@ -47,12 +48,12 @@ public class ActivityRecognitionIntentService extends IntentService {
             ActivityRecognitionResult result =
                     ActivityRecognitionResult.extractResult(intent);
 
+            ActivityDeterminator(result);
 
         } else {
             /*
-             * This implementation ignores intents that don't contain
-             * an activity update. If you wish, you can report them as
-             * errors.
+             * Do nothing, there was not an activity update.
+             * Might want to error handle this later on in case activity updates somehow stopped coming but we're still getting intents
              */
         }
     }
@@ -66,7 +67,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         DetectedActivity newestActivity = result.getMostProbableActivity();
 
         // check for confidence level
-        if (newestActivity.getConfidence() < 50) {
+        if (newestActivity.getConfidence() < MIN_CONFIDENCE_LVL) {
             // if the confidence is less than 50 we will not accept it
             newestActivity = new DetectedActivity(DetectedActivity.UNKNOWN, 100);
         }
@@ -106,6 +107,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_ACTIVITY_TYPE, newestActivity.getType());
         values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
         values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_CONFIDENCE, newestActivity.getConfidence());
+        values.put(DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_IS_DRIVING, isDrivingForSure);
 
         db.InsertSessionActivity(values);
     }

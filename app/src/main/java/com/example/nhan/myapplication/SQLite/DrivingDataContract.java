@@ -34,6 +34,9 @@ public class DrivingDataContract {
     public static abstract class SESSION_ACTIVITIES implements BaseColumns{
         public static final String TABLE_NAME = "SESSION_ACTIVITIES";
         public static final String COLUMN_NAME_ACTIVITY_STATUS = "ACTIVITY_STATUS";
+        public static final String COLUMN_NAME_ACTIVITY_TYPE = "ACTIVITY_TYPE"; // enum of the activity type
+        public static final String COLUMN_NAME_CONFIDENCE = "CONFIDENCE";
+        public static final String COLUMN_NAME_IS_DRIVING = "IS_DRIVING";
         public static final String COLUMN_NAME_CREATED_DATE = "CREATED_DATE";
     }
 }
