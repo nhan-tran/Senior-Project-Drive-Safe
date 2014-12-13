@@ -5,10 +5,13 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +46,7 @@ public class MainActivity extends FragmentActivity implements
 
     // Constants that define the activity detection interval
     public static final int MILLISECONDS_PER_SECOND = 1000;
-    public static final int DETECTION_INTERVAL_SECONDS = 5;
+    public static final int DETECTION_INTERVAL_SECONDS = 10;
     public static final int DETECTION_INTERVAL_MILLISECONDS =
             MILLISECONDS_PER_SECOND * DETECTION_INTERVAL_SECONDS;
 
@@ -79,6 +82,12 @@ public class MainActivity extends FragmentActivity implements
      *
      */
     public void startUpdates() {
+
+        Context ctx = getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor prefsEdit = prefs.edit();
+        prefsEdit.putBoolean("isDrivingForSure", false);
+        prefsEdit.commit(); // commit the edit!
 
         // Set the request type to START
         mRequestType = REQUEST_TYPE.START;

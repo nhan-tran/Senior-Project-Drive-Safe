@@ -83,7 +83,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         }
 
         // testing in_vehicle
-        newestActivity = new DetectedActivity(DetectedActivity.IN_VEHICLE, 100);
+        // newestActivity = new DetectedActivity(DetectedActivity.IN_VEHICLE, 100);
 
         // get latest/last activity logged
         Cursor cursor = db.GetLatestSessionActivities();
@@ -105,6 +105,9 @@ public class ActivityRecognitionIntentService extends IntentService {
                 isDrivingForSure = true;
                 SharedPreferences.Editor prefsEdit = prefs.edit();
                 prefsEdit.putBoolean("isDrivingForSure", isDrivingForSure);
+                prefsEdit.commit(); // commit the edit!
+
+                //Boolean confirm_isDrivingForSure = prefs.getBoolean("isDrivingForSure", false);
 
             } else {
                 // either the previous activity was not in_vehicle or we are already isDrivingForSure (so we're already logging)
@@ -117,6 +120,7 @@ public class ActivityRecognitionIntentService extends IntentService {
                 isDrivingForSure = false;
                 SharedPreferences.Editor prefsEdit = prefs.edit();
                 prefsEdit.putBoolean("isDrivingForSure", isDrivingForSure);
+                prefsEdit.commit(); // commit the edit!
             }
         }
         else {
