@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.nhan.myapplication.Enums.RequestType;
 import com.example.nhan.myapplication.SQLite.DAL;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
@@ -27,27 +28,25 @@ public class LocationRequestor implements
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener
 {
-        Context mContext;
-        GoogleApiClient mClient;
-        Boolean mConnected;
-        PendingIntent mLocationUpdatesPendingIntent;
+    Context mContext;
+    GoogleApiClient mClient;
+    Boolean mConnected;
+    PendingIntent mLocationUpdatesPendingIntent;
+    RequestType mRequestType;
 
-        static final int UPDATE_INTERVAL = 1000 * 5;   // ms * number of seconds
+    static final int UPDATE_INTERVAL = 1000 * 5;   // ms * number of seconds
 
-        public LocationRequestor(Context context) {
-            mContext = context;
-            mClient = new GoogleApiClient.Builder(mContext)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
+    public LocationRequestor(Context context, RequestType requestType) {
+        mContext = context;
+        mRequestType = requestType;
 
-            mClient.connect();
-        }
+        mClient = new GoogleApiClient.Builder(mContext)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
-    public void requestUpdates()
-    {
-       // LocationServices.FusedLocationApi.
+        mClient.connect();
     }
 
     @Override
@@ -65,17 +64,25 @@ public class LocationRequestor implements
                 PendingIntent.getService(mContext, 0, intent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mClient, locationRequest, mLocationUpdatesPendingIntent);
+        switch (mRequestType) {
+            case START:
+                LocationServices.FusedLocationApi.requestLocationUpdates(mClient, locationRequest, mLocationUpdatesPendingIntent);
+                break;
+            case STOP:
+                LocationServices.FusedLocationApi.removeLocationUpdates(mClient, mLocationUpdatesPendingIntent);
+                break;
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         mConnected = false;
+        Log.d("LocationRequestor", "LocationRequestor onConnectionSuspended()");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("LocationManager", "onConnectionFailed()");
+        Log.d("LocationRequestor", "LocationRequestor onConnectionFailed()");
     }
 
 }

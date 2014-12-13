@@ -67,13 +67,23 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Insert Row"
+            android:text="Stop Location Updates"
             android:id="@+id/btn_insert_row"
             android:layout_alignTop="@+id/btn_silent"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:onClick="insertRow"
+            android:onClick="stopLocationUpdates"
             />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Location Updates"
+            android:id="@+id/button"
+            android:onClick="startLocationUpdates"
+            android:layout_above="@+id/btn_insert_row"
+            android:layout_alignLeft="@+id/btn_insert_row"
+            android:layout_alignStart="@+id/btn_insert_row" />
     </RelativeLayout>
 
 </LinearLayout> <!--Parent-->

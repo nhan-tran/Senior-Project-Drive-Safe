@@ -19,8 +19,6 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TBL_LOCATION_LOG =
             "CREATE TABLE " + DrivingDataContract.LOCATION_LOG.TABLE_NAME + " (" +
                     DrivingDataContract.LOCATION_LOG._ID + " INTEGER PRIMARY KEY," +
-                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACTIVITY_STATUS + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED + REAL_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE + REAL_TYPE + COMMA_SEP +
@@ -28,10 +26,8 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED + INT_TYPE + COMMA_SEP +
-                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_HAS_LOCATION + INT_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING + REAL_TYPE + COMMA_SEP +
-                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY + REAL_TYPE + COMMA_SEP +
-                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CONFIDENCE + INT_TYPE +
+                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY + REAL_TYPE +
                     " )";
 
     private static final String SQL_CREATE_TBL_SESSION_ACTIVITIES =
@@ -44,7 +40,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
                     DrivingDataContract.SESSION_ACTIVITIES.COLUMN_NAME_CREATED_DATE + TEXT_TYPE + " )";
 
 
-    // onUpdate Delete queries // test
+    // onUpdate Delete existing tables queries
     private static final String SQL_DELETE_TBL_LOCATION_LOG =
             "DROP TABLE IF EXISTS " + DrivingDataContract.LOCATION_LOG.TABLE_NAME;
 
@@ -52,7 +48,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME;
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "DRIVE_SAFE_DEV.db";
 
     public DriveSafeDbHelper(Context context) {
@@ -65,9 +61,9 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        //db.execSQL(SQL_DELETE_TBL_LOCATION_LOG);
-        //db.execSQL(SQL_DELETE_TBL_SESSION_ACTIVITIES);
-        //onCreate(db);
+        db.execSQL(SQL_DELETE_TBL_LOCATION_LOG);
+        db.execSQL(SQL_DELETE_TBL_SESSION_ACTIVITIES);
+        onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);

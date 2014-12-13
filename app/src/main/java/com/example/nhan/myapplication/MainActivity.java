@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nhan.myapplication.Enums.RequestType;
 import com.example.nhan.myapplication.SQLite.DAL;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
@@ -42,7 +43,7 @@ public class MainActivity extends FragmentActivity implements
 
     // Constants that define the activity detection interval
     public static final int MILLISECONDS_PER_SECOND = 1000;
-    public static final int DETECTION_INTERVAL_SECONDS = 20;
+    public static final int DETECTION_INTERVAL_SECONDS = 5;
     public static final int DETECTION_INTERVAL_MILLISECONDS =
             MILLISECONDS_PER_SECOND * DETECTION_INTERVAL_SECONDS;
 
@@ -272,48 +273,12 @@ public class MainActivity extends FragmentActivity implements
 */
     }
 
-    public void WriteStatus(String probableActivity)
-    {
-        TextView status_message = (TextView) findViewById(R.id.textView_status);
-        //String currentText = status_message.getText().toString();
-        //Location mCurrentLocation = mLocationClient.getLastLocation();
-        //String location  = mCurrentLocation.toString();
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-
-        status_message.setText("\nGoogle Services connection status: " + probableActivity +
-                //"\nLocation object info:\n" + location +
-                "\nUpdated: " + dateFormat.format(date));
+    public void startLocationUpdates(View view){
+        LocationRequestor requestor = new LocationRequestor(this, RequestType.START);
     }
-
-    public void insertRow(View view)
-    {
-        DAL db = new DAL(this);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        // Create a new map of values, where column names are the keys
-        Location currentLocation = new Location("kd");
-        ContentValues values = new ContentValues();
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ENTRY_ID, "testId");
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACTIVITY_STATUS, "test");
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED, currentLocation.getSpeed());
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING, currentLocation.getBearing());
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, "testUserId");
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED, 0);
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CONFIDENCE, 55.55);
-        values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
-
-        db.WriteLog(values);
-
-        Toast.makeText(this, "Row created", Toast.LENGTH_SHORT).show();
+    public void stopLocationUpdates(View view){
+       LocationRequestor requestor = new LocationRequestor(this, RequestType.STOP);
     }
-
 
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {

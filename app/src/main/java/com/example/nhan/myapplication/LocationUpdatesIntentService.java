@@ -1,13 +1,21 @@
 package com.example.nhan.myapplication;
 
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Location;
 
+import com.example.nhan.myapplication.SQLite.DAL;
+import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.location.LocationClient;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
- * Created by Nhan on 12/11/2014.
+ * This class handles location updates that were initially requested by the LocationRequestor class.
+ *
  */
 public class LocationUpdatesIntentService extends IntentService {
 
@@ -20,9 +28,25 @@ public class LocationUpdatesIntentService extends IntentService {
 
         // http://www.intelligrape.com/blog/background-location-updates-on-android/
         // OMG thank god... finally
-        
-        // not sure how to get location data out of this intent yet.
-        Boolean x = true; // let's pause and see...
         Location location = (Location) intent.getExtras().get(LocationClient.KEY_LOCATION_CHANGED);
+
+        // write the location to db
+        if (location != null)
+        {
+            DAL db = new DAL(this);
+            ContentValues values = new ContentValues();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED, location.getSpeed());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE, location.getLongitude());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE, location.getLatitude());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME, location.getTime());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING, location.getBearing());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, "testUserId");
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, location.getAccuracy());
+
+            db.InsertRecord(DrivingDataContract.LOCATION_LOG.TABLE_NAME, values);
+        }
     }
 }

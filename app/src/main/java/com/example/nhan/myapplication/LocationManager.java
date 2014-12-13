@@ -83,7 +83,7 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
             //values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ENTRY_ID, "testId");
-            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACTIVITY_STATUS, activityName);
+            //values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACTIVITY_STATUS, activityName);
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED, currentLocation.getSpeed());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE, currentLocation.getLongitude());
@@ -92,8 +92,8 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING, currentLocation.getBearing());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, "testUserId");
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED, 0);
-            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
-            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CONFIDENCE, confidence);
+            //values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_HAS_LOCATION, (currentLocation != null));
+            //values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CONFIDENCE, confidence);
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
 
             dal.WriteLog(values);
