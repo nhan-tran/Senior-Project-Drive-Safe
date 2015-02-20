@@ -86,6 +86,8 @@ public class ActivityRecognitionIntentService extends IntentService {
         // newestActivity = new DetectedActivity(DetectedActivity.IN_VEHICLE, 100);
 
         // get latest/last activity logged
+        // right now this is just getting the last top 1 * activity, can refactor later to get n
+        // number of activities then do a loop to check if n numbers == driving
         Cursor cursor = db.GetLatestSessionActivities();
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {

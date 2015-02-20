@@ -55,8 +55,9 @@ public class DAL {
 
     public Cursor GetLatestSessionActivities()
     {
+        // improve this query to select top X where X is the number of latest records... not select all!
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from "  + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME +
+        Cursor cursor = db.rawQuery("select top 1 * from "  + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME +
                             " order by _id desc", new String[]{} );
 
         return cursor;

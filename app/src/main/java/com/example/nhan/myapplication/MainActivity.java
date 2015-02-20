@@ -15,8 +15,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.nhan.myapplication.Enums.RequestType;
 import com.example.nhan.myapplication.SQLite.DAL;
@@ -101,7 +103,7 @@ public class MainActivity extends FragmentActivity implements
             // Indicate that a request is in progress
             mInProgress = true;
             // Request a connection to Location Services
-            mActivityRecognitionClient.connect();
+            //mActivityRecognitionClient.connect();
             //
         } else {
             /*
@@ -111,8 +113,10 @@ public class MainActivity extends FragmentActivity implements
              * request.
              */
             Toast.makeText(this, "Cancelling the request in progress... Reconnecting... ", Toast.LENGTH_LONG).show();
-            mActivityRecognitionClient.connect();
+            //mActivityRecognitionClient.connect();
         }
+
+        ToggleStartStopButton();
     }
 
     /*
@@ -143,7 +147,7 @@ public class MainActivity extends FragmentActivity implements
             // Indicate that a request is in progress
             mInProgress = true;
             // Request a connection to Location Services
-            mActivityRecognitionClient.connect();
+            //mActivityRecognitionClient.connect();
             //
         } else {
              /*
@@ -153,9 +157,11 @@ public class MainActivity extends FragmentActivity implements
              * request.
              */
             Toast.makeText(this, "Cancelling the request in progress... Reconnecting... ", Toast.LENGTH_LONG).show();
-            mActivityRecognitionClient.disconnect();
-            mActivityRecognitionClient.connect();
+            //mActivityRecognitionClient.disconnect();
+            //mActivityRecognitionClient.connect();
         }
+
+        ToggleStartStopButton();
     }
     /*
      * Called when the Activity becomes visible.
@@ -163,6 +169,16 @@ public class MainActivity extends FragmentActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+
+        Context ctx = getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor prefsEdit = prefs.edit();
+        prefsEdit.putBoolean("isDrivingForSure", false);
+        prefsEdit.commit(); // commit the edit!
+
+        Boolean x = prefs.getBoolean("isDrivingForSure", false);
+
+        ToggleStartStopButton();
     }
 
     /*
@@ -379,5 +395,27 @@ public class MainActivity extends FragmentActivity implements
        }*/
         Intent dbmanager = new Intent(this,AndroidDatabaseManager.class);
         startActivity(dbmanager);
+    }
+
+    private void ToggleStartStopButton()
+    {
+        Button startButton = (Button) findViewById(R.id.btn_activity_status);
+        Button stopButton = (Button) findViewById(R.id.btn_stop_updates);
+        TextView status = (TextView) findViewById(R.id.textView_status);
+
+        if (mRequestType == null || mRequestType == REQUEST_TYPE.STOP)
+        {
+            // show start button
+            startButton.setVisibility(View.VISIBLE);
+            stopButton.setVisibility(View.GONE);
+            status.setText("Monitoring is OFF");
+        }
+        else
+        {
+            // show stop button
+            startButton.setVisibility(View.GONE);
+            stopButton.setVisibility(View.VISIBLE);
+            status.setText("Monitoring is ON");
+        }
     }
 }

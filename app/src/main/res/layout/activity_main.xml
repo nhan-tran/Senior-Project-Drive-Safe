@@ -3,7 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/ds_green1">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -24,25 +25,15 @@
             android:layout_height="wrap_content"
             android:text="Start Monitoring"
             android:onClick="getStatus"
-            android:layout_centerHorizontal="false" />
+            android:layout_centerHorizontal="true" />
 
-        <EditText android:id="@+id/et_status_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btn_activity_status"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:autoText="false"
-            android:clickable="false"
-            android:editable="false"
-            android:enabled="false" />
 
         <TextView android:id="@+id/textView_status"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_below="@+id/et_status_message"
-            android:layout_above="@+id/btn_silent" />
+            android:layout_above="@+id/btn_start_location_updates" />
 
         <Button
             android:layout_width="wrap_content"
@@ -50,9 +41,7 @@
             android:text="Stop Monitoring"
             android:id="@+id/btn_stop_updates"
             android:onClick="stopActivityUpdates"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_centerHorizontal="true"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -79,11 +68,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Start Location Updates"
-            android:id="@+id/button"
+            android:id="@+id/btn_start_location_updates"
             android:onClick="startLocationUpdates"
             android:layout_above="@+id/btn_insert_row"
-            android:layout_alignLeft="@+id/btn_insert_row"
-            android:layout_alignStart="@+id/btn_insert_row" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
 </LinearLayout> <!--Parent-->
