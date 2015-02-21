@@ -103,7 +103,7 @@ public class MainActivity extends FragmentActivity implements
             // Indicate that a request is in progress
             mInProgress = true;
             // Request a connection to Location Services
-            //mActivityRecognitionClient.connect();
+            mActivityRecognitionClient.connect();
             //
         } else {
             /*
@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity implements
              * request.
              */
             Toast.makeText(this, "Cancelling the request in progress... Reconnecting... ", Toast.LENGTH_LONG).show();
-            //mActivityRecognitionClient.connect();
+            mActivityRecognitionClient.connect();
         }
 
         ToggleStartStopButton();
@@ -147,7 +147,7 @@ public class MainActivity extends FragmentActivity implements
             // Indicate that a request is in progress
             mInProgress = true;
             // Request a connection to Location Services
-            //mActivityRecognitionClient.connect();
+            mActivityRecognitionClient.connect();
             //
         } else {
              /*
@@ -157,8 +157,8 @@ public class MainActivity extends FragmentActivity implements
              * request.
              */
             Toast.makeText(this, "Cancelling the request in progress... Reconnecting... ", Toast.LENGTH_LONG).show();
-            //mActivityRecognitionClient.disconnect();
-            //mActivityRecognitionClient.connect();
+            mActivityRecognitionClient.disconnect();
+            mActivityRecognitionClient.connect();
         }
 
         ToggleStartStopButton();
@@ -169,14 +169,6 @@ public class MainActivity extends FragmentActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-        Context ctx = getApplicationContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences.Editor prefsEdit = prefs.edit();
-        prefsEdit.putBoolean("isDrivingForSure", false);
-        prefsEdit.commit(); // commit the edit!
-
-        Boolean x = prefs.getBoolean("isDrivingForSure", false);
 
         ToggleStartStopButton();
     }
