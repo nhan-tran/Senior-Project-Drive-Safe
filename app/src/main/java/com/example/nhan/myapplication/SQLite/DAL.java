@@ -57,7 +57,8 @@ public class DAL {
     {
         // improve this query to select top X where X is the number of latest records... not select all!
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                            " order by _id desc", new String[]{} );
+        Cursor cursor = db.rawQuery("select * from "  + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME +
+                            " order by _id desc limit 1", new String[]{} );
 
         return cursor;
     }
