@@ -1,22 +1,26 @@
 package com.example.nhan.myapplication.SQLite;
 
+import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 
 import com.example.nhan.myapplication.SQLite.DrivingDataContract.LOCATION_LOG;
 
 /**
  * Created by Nhan on 11/24/2014.
  */
-public class DAL {
+public class DriveSafeProvider extends ContentProvider {
 
     private Context mContext;
     DriveSafeDbHelper mDbHelper;
     //SQLiteDatabase db;
 
-    public DAL(Context context) {
+    public DriveSafeProvider(){};
+
+    public DriveSafeProvider(Context context) {
         mContext = context;
         mDbHelper = new DriveSafeDbHelper(mContext);
 
@@ -75,5 +79,36 @@ public class DAL {
         }
 
         return newRowId;
+    }
+
+    @Override
+    public boolean onCreate() {
+        mDbHelper = new DriveSafeDbHelper(getContext());
+        return true;
+    }
+
+    @Override
+    public Cursor query(Uri uri, String[] strings, String s, String[] strings2, String s2) {
+        return null;
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        return null;
+    }
+
+    @Override
+    public Uri insert(Uri uri, ContentValues contentValues) {
+        return null;
+    }
+
+    @Override
+    public int delete(Uri uri, String s, String[] strings) {
+        return 0;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
+        return 0;
     }
 }

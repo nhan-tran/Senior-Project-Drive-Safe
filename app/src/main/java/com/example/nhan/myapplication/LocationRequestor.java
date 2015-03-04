@@ -1,25 +1,17 @@
 package com.example.nhan.myapplication;
 
 import android.app.PendingIntent;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.example.nhan.myapplication.Enums.RequestType;
-import com.example.nhan.myapplication.SQLite.DAL;
-import com.example.nhan.myapplication.SQLite.DrivingDataContract;
+import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by Nhan on 12/11/2014.
@@ -52,7 +44,7 @@ public class LocationRequestor implements
     @Override
     public void onConnected(Bundle bundle) {
         mConnected = true;
-        DAL dal = new DAL(mContext);
+        DriveSafeProvider driveSafeProvider = new DriveSafeProvider(mContext);
 
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

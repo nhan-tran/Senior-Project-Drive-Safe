@@ -6,7 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.nhan.myapplication.SQLite.DAL;
+import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -66,7 +66,7 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onConnected(Bundle bundle) {
         mConnected = true;
-        DAL dal = new DAL(mContext);
+        DriveSafeProvider driveSafeProvider = new DriveSafeProvider(mContext);
         int confidence = mMostProbableActivity.getConfidence();
         int activityType = mMostProbableActivity.getType();
         String activityName = getNameFromType(activityType);
@@ -96,7 +96,7 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
             //values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CONFIDENCE, confidence);
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
 
-            dal.WriteLog(values);
+            driveSafeProvider.WriteLog(values);
         }
     }
 

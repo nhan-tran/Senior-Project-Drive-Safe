@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Location;
 
-import com.example.nhan.myapplication.SQLite.DAL;
+import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.location.LocationClient;
 
@@ -33,7 +33,7 @@ public class LocationUpdatesIntentService extends IntentService {
         // write the location to db
         if (location != null)
         {
-            DAL db = new DAL(this);
+            DriveSafeProvider db = new DriveSafeProvider(this);
             ContentValues values = new ContentValues();
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();

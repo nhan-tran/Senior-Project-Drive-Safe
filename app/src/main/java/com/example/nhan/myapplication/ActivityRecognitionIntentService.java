@@ -13,7 +13,7 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 
 import com.example.nhan.myapplication.Enums.RequestType;
-import com.example.nhan.myapplication.SQLite.DAL;
+import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
@@ -29,13 +29,13 @@ import java.util.Date;
 public class ActivityRecognitionIntentService extends IntentService {
 
     LocationManager mLocationManager;
-    DAL db;
+    DriveSafeProvider db;
     static final int MIN_CONFIDENCE_LVL = 50;
 
     public ActivityRecognitionIntentService()
     {
         super("ActivityRecognitionIntentService");
-        db = new DAL(this);
+        db = new DriveSafeProvider(this);
         Boolean x = true;
     }
     /**
