@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -18,11 +20,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nhan.myapplication.Enums.RequestType;
+import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.LocationClient;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -376,6 +391,65 @@ public class MainActivity extends FragmentActivity implements
            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
            Toast.makeText(this, "Ringer Mode - Normal", Toast.LENGTH_SHORT).show();
        }*/
+
+        // Testing if querying my Provider works?!?!
+        // Does a query against the table and returns a Cursor object
+        Uri contentUri = Uri.parse("content://com.example.nhan.myapplication.DriveSafeProvider/LOCATION_LOG");
+       Cursor mCursor = getContentResolver().query(
+               contentUri,  // The content URI of the words table
+               null,                       // The columns to return for each row
+               null,                   // Either null, or the word the user entered
+               null,                    // Either empty, or the string the user entered
+               "");                       // The sort order for the returned rows
+
+        JSONObject jsonObj = new JSONObject();
+        mCursor.moveToFirst();
+
+        String createdDate = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE));
+        Double speed = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED));
+        Double latitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE));
+        Double longitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE));
+        int locationTime = mCursor.getInt(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME));
+        String userId = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID));
+        int sync = mCursor.getInt(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED));
+        Double bearing = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING));
+        Double accuracy = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY));
+
+        try {
+            jsonObj.put("Created_Date", createdDate.toString());
+            jsonObj.put("Speed", speed);
+            jsonObj.put("Latitude", latitude);
+            jsonObj.put("Longitude", longitude);
+            jsonObj.put("Location_Time", locationTime);
+            jsonObj.put("User_Id", userId);
+            jsonObj.put("Synced", sync);
+            jsonObj.put("Bearing", bearing);
+            jsonObj.put("Accuracy", accuracy);
+
+            // http://www.wikihow.com/Execute-HTTP-POST-Requests-in-Android
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppostreq = new HttpPost("http://drivesafe-dev.azurewebsites.net/api/Location_Log_Sync_");
+
+            try {
+                StringEntity se = new StringEntity(jsonObj.toString());
+                se.setContentType("application/json;charset=UTF-8");
+                se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
+                httppostreq.setEntity(se);
+
+                HttpResponse httpresponse = httpclient.execute(httppostreq);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("httppost", e.toString());
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        mCursor.close();
+
         Intent dbmanager = new Intent(this,AndroidDatabaseManager.class);
         startActivity(dbmanager);
     }

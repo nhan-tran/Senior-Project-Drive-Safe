@@ -3,11 +3,12 @@ package com.example.nhan.myapplication.SQLite;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.example.nhan.myapplication.SQLite.DrivingDataContract.LOCATION_LOG;
+import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 
 /**
  * Created by Nhan on 11/24/2014.
@@ -17,13 +18,16 @@ public class DriveSafeProvider extends ContentProvider {
     private Context mContext;
     DriveSafeDbHelper mDbHelper;
     //SQLiteDatabase db;
-
     public DriveSafeProvider(){};
+
+    private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
 
     public DriveSafeProvider(Context context) {
         mContext = context;
         mDbHelper = new DriveSafeDbHelper(mContext);
 
+        sUriMatcher.addURI("content://com.example.nhan.myapplication.DriveSafeProvider", DrivingDataContract.LOCATION_LOG.TABLE_NAME, 1);
     }
 
     public void WriteLog(ContentValues values)
@@ -35,7 +39,7 @@ public class DriveSafeProvider extends ContentProvider {
             // Insert the new row, returning the primary key value of the new row
             long newRowId;
             newRowId = db.insert(
-                    LOCATION_LOG.TABLE_NAME,
+                    DrivingDataContract.LOCATION_LOG.TABLE_NAME,
                     null,
                     values);
         }
@@ -84,12 +88,39 @@ public class DriveSafeProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mDbHelper = new DriveSafeDbHelper(getContext());
+        sUriMatcher.addURI("content://com.example.nhan.myapplication.DriveSafeProvider", DrivingDataContract.LOCATION_LOG.TABLE_NAME, 1);
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] strings, String s, String[] strings2, String s2) {
-        return null;
+        Cursor cursor = null;
+        int unsyncedCount = 0;
+
+        switch (sUriMatcher.match(uri)){
+            // location log
+            case 1:
+            {
+                // improve this query to select top X where X is the number of latest records... not select all!
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                cursor = db.rawQuery("select * from "  + DrivingDataContract.LOCATION_LOG.TABLE_NAME +
+                        "where " + DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED + " is null ", new String[]{});
+                break;
+            }
+            default:
+                // improve this query to select top X where X is the number of latest records... not select all!
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+               // cursor = db.rawQuery("select * from "  + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME +
+                        //" order by _id desc limit 1", new String[]{} );
+               // int firstCount = cursor.getCount();
+
+                cursor = db.rawQuery("select * from "  + DrivingDataContract.LOCATION_LOG.TABLE_NAME +
+                        " where " + DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED + " ISNULL ", new String[]{});
+                unsyncedCount = cursor.getCount();
+                break;
+        }
+
+        return cursor;
     }
 
     @Override

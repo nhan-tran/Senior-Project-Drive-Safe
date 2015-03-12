@@ -67,7 +67,7 @@
                 android:resource="@xml/syncadapter" />
         </service>
         <provider android:name=".SQLite.DriveSafeProvider"
-            android:authorities="com.example.nhan.myapplication.DriveSafe"
+            android:authorities="com.example.nhan.myapplication.DriveSafeProvider"
             android:syncable="true">
         </provider>
 
