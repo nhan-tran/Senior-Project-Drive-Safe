@@ -19,6 +19,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.nhan.myapplication.Enums.RequestType;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +45,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -394,7 +403,7 @@ public class MainActivity extends FragmentActivity implements
 
         // Testing if querying my Provider works?!?!
         // Does a query against the table and returns a Cursor object
-        Uri contentUri = Uri.parse("content://com.example.nhan.myapplication.DriveSafeProvider/LOCATION_LOG");
+       Uri contentUri = Uri.parse("content://com.example.nhan.myapplication.DriveSafeProvider");
        Cursor mCursor = getContentResolver().query(
                contentUri,  // The content URI of the words table
                null,                       // The columns to return for each row
@@ -420,29 +429,27 @@ public class MainActivity extends FragmentActivity implements
             jsonObj.put("Speed", speed);
             jsonObj.put("Latitude", latitude);
             jsonObj.put("Longitude", longitude);
-            jsonObj.put("Location_Time", locationTime);
-            jsonObj.put("User_Id", userId);
+            jsonObj.put("Location_Time", createdDate.toString());
+            jsonObj.put("User_Id", 1);
             jsonObj.put("Synced", sync);
             jsonObj.put("Bearing", bearing);
             jsonObj.put("Accuracy", accuracy);
 
-            // http://www.wikihow.com/Execute-HTTP-POST-Requests-in-Android
-            DefaultHttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppostreq = new HttpPost("http://drivesafe-dev.azurewebsites.net/api/Location_Log_Sync_");
+            RequestQueue queue = Volley.newRequestQueue(this);  // this = context
+            String url = "http://drivesafe-dev.azurewebsites.net/api/Location_Log_Sync_";
 
-            try {
-                StringEntity se = new StringEntity(jsonObj.toString());
-                se.setContentType("application/json;charset=UTF-8");
-                se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"application/json;charset=UTF-8"));
-                httppostreq.setEntity(se);
-
-                HttpResponse httpresponse = httpclient.execute(httppostreq);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.d("httppost", e.toString());
-            }
-
+            JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObj, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.i("volley", "response: " + response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("volley", "error: " + error);
+                }
+            });
+            queue.add(postRequest);
         } catch (JSONException e) {
             e.printStackTrace();
         }
