@@ -46,20 +46,16 @@ public class DriveSafeProvider extends ContentProvider {
         db.close();
     }
 
-   /* public long InsertSessionActivity(ContentValues values)
-    {
-        long newRowId = 0;
-
+    // updates a specific record in Location_Log that matches @_id
+    public void UpdateLogRecord(ContentValues values, String _id){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int rowsAffected = 0;
         if (values != null){
             // Insert the new row, returning the primary key value of the new row
-            newRowId = db.insert(
-                    DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME,
-                    null,
-                    values);
+            rowsAffected = db.update(DrivingDataContract.LOCATION_LOG.TABLE_NAME, values, "_ID = " + _id, null );
         }
-
-        return newRowId;
-    }*/
+        db.close();
+    }
 
     public Cursor GetLatestSessionActivities()
     {

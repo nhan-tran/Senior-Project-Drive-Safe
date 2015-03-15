@@ -29,7 +29,15 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING + REAL_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY + REAL_TYPE +
                     " )";
-
+    private static final String SQL_CREATE_TBL_USER_INFO =
+            "CREATE TABLE " + DrivingDataContract.USER_INFO.TABLE_NAME + " (" +
+                    DrivingDataContract.USER_INFO._ID + " INTEGER PRIMARY KEY," +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_CREATED_DATE + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_GROUP_ID + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE + TEXT_TYPE + COMMA_SEP +
+                    " )";
     private static final String SQL_CREATE_TBL_SESSION_ACTIVITIES =
             "CREATE TABLE " + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME + " (" +
                     DrivingDataContract.SESSION_ACTIVITIES._ID + " INTEGER PRIMARY KEY," +
@@ -47,8 +55,11 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_TBL_SESSION_ACTIVITIES =
             "DROP TABLE IF EXISTS " + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME;
 
+    private static final String SQL_DELETE_TBL_USER_INFO =
+            "DROP TABLE IF EXISTS " + DrivingDataContract.USER_INFO.TABLE_NAME;
+
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "DRIVE_SAFE_DEV.db";
 
     public DriveSafeDbHelper(Context context) {
@@ -57,12 +68,14 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TBL_LOCATION_LOG);
         db.execSQL(SQL_CREATE_TBL_SESSION_ACTIVITIES);
+        db.execSQL(SQL_CREATE_TBL_USER_INFO);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
         db.execSQL(SQL_DELETE_TBL_LOCATION_LOG);
         db.execSQL(SQL_DELETE_TBL_SESSION_ACTIVITIES);
+        db.execSQL(SQL_DELETE_TBL_USER_INFO);
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {

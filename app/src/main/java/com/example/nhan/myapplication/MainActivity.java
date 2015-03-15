@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -27,10 +28,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.nhan.myapplication.Enums.RequestType;
+import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.drive.Drive;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.LocationClient;
 
@@ -196,6 +199,7 @@ public class MainActivity extends FragmentActivity implements
         // Disconnecting the client invalidates it.
         //mLocationClient.disconnect();
         super.onStop();
+        SetIsMonitoring(false);
     }
 
     protected void onDestroy()
@@ -208,6 +212,8 @@ public class MainActivity extends FragmentActivity implements
         // Display the connection status
         switch (mRequestType) {
             case START :
+                SetIsMonitoring(true);
+
                 Toast.makeText(this, "Connected to Start", Toast.LENGTH_SHORT).show();
                 /*
                  * Request activity recognition updates using the
@@ -219,6 +225,8 @@ public class MainActivity extends FragmentActivity implements
                         mActivityRecognitionPendingIntent);
                 break;
             case STOP :
+                SetIsMonitoring(false);
+
                 Toast.makeText(this, "Connected to Stop", Toast.LENGTH_SHORT).show();
                 mActivityRecognitionClient.removeActivityUpdates(
                         mActivityRecognitionPendingIntent);
@@ -256,6 +264,7 @@ public class MainActivity extends FragmentActivity implements
         mInProgress = false;
         // Delete the client
         mActivityRecognitionClient = null;
+        SetIsMonitoring(false);
     }
 
     /*
@@ -291,6 +300,7 @@ public class MainActivity extends FragmentActivity implements
              */
             showErrorDialog(connectionResult.getErrorCode());
         }
+        SetIsMonitoring(false);
     }
 
     void showErrorDialog(int code) {
@@ -387,78 +397,95 @@ public class MainActivity extends FragmentActivity implements
 
     public void toggleSilentRingerMode(View view)
     {
-        /*AudioManager audioManager;
-        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        Intent dbmanager = new Intent(this,AndroidDatabaseManager.class);
+        startActivity(dbmanager);
+    }
 
-       if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT)
-       {
-           audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-           Toast.makeText(this, "Ringer Mode - Silent", Toast.LENGTH_SHORT).show();
-       }
-       else
-       {
-           audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-           Toast.makeText(this, "Ringer Mode - Normal", Toast.LENGTH_SHORT).show();
-       }*/
+    // for each record from location log that is not synced, POST it to the api
+    public void SyncDataPerRecord(View view)
+    {
+        boolean success = true;
+        DriveSafeProvider db = new DriveSafeProvider(this);
+        int maxSyncCount = 10;
+        int syncCount = 0;
 
         // Testing if querying my Provider works?!?!
         // Does a query against the table and returns a Cursor object
-       Uri contentUri = Uri.parse("content://com.example.nhan.myapplication.DriveSafeProvider");
-       Cursor mCursor = getContentResolver().query(
-               contentUri,  // The content URI of the words table
-               null,                       // The columns to return for each row
-               null,                   // Either null, or the word the user entered
-               null,                    // Either empty, or the string the user entered
-               "");                       // The sort order for the returned rows
+        Uri contentUri = Uri.parse("content://com.example.nhan.myapplication.DriveSafeProvider");
+        final Cursor mCursor = getContentResolver().query(
+                contentUri,  // The content URI of the words table
+                null,                       // The columns to return for each row
+                null,                   // Either null, or the word the user entered
+                null,                    // Either empty, or the string the user entered
+                "");                       // The sort order for the returned rows
 
         JSONObject jsonObj = new JSONObject();
+
         mCursor.moveToFirst();
 
-        String createdDate = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE));
-        Double speed = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED));
-        Double latitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE));
-        Double longitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE));
-        int locationTime = mCursor.getInt(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME));
-        String userId = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID));
-        int sync = mCursor.getInt(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED));
-        Double bearing = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING));
-        Double accuracy = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY));
+        while (!mCursor.isAfterLast() && syncCount < maxSyncCount) {
+            String createdDate = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE));
+            Double speed = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SPEED));
+            Double latitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE));
+            Double longitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE));
+            Long locationTime = mCursor.getLong(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME));
+            String userId = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID));
+            int sync = mCursor.getInt(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED));
+            Double bearing = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING));
+            Double accuracy = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY));
+            Long _ID = mCursor.getLong(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG._ID));
 
-        try {
-            jsonObj.put("Created_Date", createdDate.toString());
-            jsonObj.put("Speed", speed);
-            jsonObj.put("Latitude", latitude);
-            jsonObj.put("Longitude", longitude);
-            jsonObj.put("Location_Time", createdDate.toString());
-            jsonObj.put("User_Id", 1);
-            jsonObj.put("Synced", sync);
-            jsonObj.put("Bearing", bearing);
-            jsonObj.put("Accuracy", accuracy);
+            try {
+                jsonObj.put("Created_Date", createdDate.toString());
+                jsonObj.put("Speed", speed);
+                jsonObj.put("Latitude", latitude);
+                jsonObj.put("Longitude", longitude);
+                jsonObj.put("Location_Time", locationTime);
+                jsonObj.put("User_Id", userId);
+                jsonObj.put("Synced", sync);
+                jsonObj.put("Bearing", bearing);
+                jsonObj.put("Accuracy", accuracy);
+                jsonObj.put("_ID_Android", _ID);
 
-            RequestQueue queue = Volley.newRequestQueue(this);  // this = context
-            String url = "http://drivesafe-dev.azurewebsites.net/api/Location_Log_Sync_";
+                RequestQueue queue = Volley.newRequestQueue(this);  // this = context
+                String url = "http://drivesafe-dev.azurewebsites.net/api/Location_Log_Sync_";
 
-            JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObj, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.i("volley", "response: " + response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.i("volley", "error: " + error);
-                }
-            });
-            queue.add(postRequest);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObj, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        DriveSafeProvider db = new DriveSafeProvider(getApplicationContext());
+                        Log.i("volley", "response: " + response);
 
+                        String _id = "0";
+                        try {
+                            _id = response.getString("_ID_Android");
+                        }
+                        catch (Exception e){
+                            Log.d("Reponse JSON error", "JSON error i onRepsonse");
+                        }
+                        ContentValues cv = new ContentValues();
+                        cv.put("SYNCED", 1);
+                        db.UpdateLogRecord(cv, _id);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("volley", "error: " + error);
+                    }
+                });
+                queue.add(postRequest);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            syncCount++;
+            mCursor.moveToNext();
+        }   // while
 
         mCursor.close();
 
-        Intent dbmanager = new Intent(this,AndroidDatabaseManager.class);
-        startActivity(dbmanager);
+        Toast.makeText(this,"Syncing...", Toast.LENGTH_LONG).show();
+        //return true;
     }
 
     private void ToggleStartStopButton()
@@ -467,19 +494,35 @@ public class MainActivity extends FragmentActivity implements
         Button stopButton = (Button) findViewById(R.id.btn_stop_updates);
         TextView status = (TextView) findViewById(R.id.textView_status);
 
-        if (mRequestType == null || mRequestType == REQUEST_TYPE.STOP)
-        {
-            // show start button
-            startButton.setVisibility(View.VISIBLE);
-            stopButton.setVisibility(View.GONE);
-            status.setText("Monitoring is OFF");
-        }
-        else
+        if (IsMonitoring())
         {
             // show stop button
             startButton.setVisibility(View.GONE);
             stopButton.setVisibility(View.VISIBLE);
             status.setText("Monitoring is ON");
         }
+        else
+        {
+            // show start button
+            startButton.setVisibility(View.VISIBLE);
+            stopButton.setVisibility(View.GONE);
+            status.setText("Monitoring is OFF");
+        }
+    }
+
+    protected void SetIsMonitoring(boolean status){
+        Context ctx = getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor prefsEdit = prefs.edit();
+        prefsEdit.putBoolean("isMonitoring", status);
+        prefsEdit.commit(); // commit the edit!
+    }
+
+    protected boolean IsMonitoring(){
+        Context ctx = getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean status = prefs.getBoolean("isMonitoring", false);
+
+        return status;
     }
 }
