@@ -20,6 +20,9 @@ public class DrivingDataContract {
         public static final String COLUMN_NAME_GROUP_ID = "GROUP_ID";
         public static final String COLUMN_NAME_BUSINESS_ID = "BUSINESS_ID";
         public static final String COLUMN_NAME_VALIDATION_CODE = "VALIDATION_CODE";
+        public static final String COLUMN_NAME_ACTIVE_USER = "ACTIVE_USER";
+        public static final String COLUMN_NAME_SELECTED = "SELECTED";
+        public static final String COLUMN_NAME_NICK_NAME = "NICK_NAME";
     }
 
     public static abstract class LOCATION_LOG implements BaseColumns{

@@ -36,7 +36,10 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
                     DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.USER_INFO.COLUMN_NAME_GROUP_ID + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE + TEXT_TYPE +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER + INT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED + INT_TYPE +
                     " )";
     private static final String SQL_CREATE_TBL_SESSION_ACTIVITIES =
             "CREATE TABLE " + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME + " (" +

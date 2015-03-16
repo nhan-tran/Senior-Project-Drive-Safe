@@ -59,10 +59,17 @@ public class DriveSafeProvider extends ContentProvider {
 
     public Cursor GetLatestSessionActivities()
     {
-        // improve this query to select top X where X is the number of latest records... not select all!
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from "  + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME +
                             " order by _id desc limit 1", new String[]{} );
+
+        return cursor;
+    }
+
+    public Cursor UserInfoGetSelectedUser(){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from "  + DrivingDataContract.USER_INFO.TABLE_NAME +
+                " where " + DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED + " = 1 order by _id desc limit 1", new String[]{} );
 
         return cursor;
     }
