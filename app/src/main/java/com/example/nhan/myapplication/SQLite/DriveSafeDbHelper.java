@@ -36,7 +36,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
                     DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.USER_INFO.COLUMN_NAME_GROUP_ID + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE + TEXT_TYPE +
                     " )";
     private static final String SQL_CREATE_TBL_SESSION_ACTIVITIES =
             "CREATE TABLE " + DrivingDataContract.SESSION_ACTIVITIES.TABLE_NAME + " (" +
@@ -66,14 +66,14 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_TBL_LOCATION_LOG);
+        //db.execSQL(SQL_CREATE_TBL_LOCATION_LOG);
         db.execSQL(SQL_CREATE_TBL_SESSION_ACTIVITIES);
         db.execSQL(SQL_CREATE_TBL_USER_INFO);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        db.execSQL(SQL_DELETE_TBL_LOCATION_LOG);
+        // db.execSQL(SQL_DELETE_TBL_LOCATION_LOG);
         db.execSQL(SQL_DELETE_TBL_SESSION_ACTIVITIES);
         db.execSQL(SQL_DELETE_TBL_USER_INFO);
         onCreate(db);

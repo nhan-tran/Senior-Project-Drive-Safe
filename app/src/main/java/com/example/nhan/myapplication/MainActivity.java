@@ -70,11 +70,12 @@ public class MainActivity extends FragmentActivity implements
     public static final int DETECTION_INTERVAL_MILLISECONDS =
             MILLISECONDS_PER_SECOND * DETECTION_INTERVAL_SECONDS;
 
+    // define enum
     public enum REQUEST_TYPE {START, STOP}
+
     private REQUEST_TYPE mRequestType;
 
     private LocationClient mLocationClient;
-    //private Location mCurrentLocation;
 
     // Flag that indicates if a request is underway.
     private boolean mInProgress;
@@ -133,8 +134,6 @@ public class MainActivity extends FragmentActivity implements
             Toast.makeText(this, "Cancelling the request in progress... Reconnecting... ", Toast.LENGTH_LONG).show();
             mActivityRecognitionClient.connect();
         }
-
-        ToggleStartStopButton();
     }
 
     /*
