@@ -68,7 +68,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         int previousActivityType = DetectedActivity.UNKNOWN;    // set default last activity to UNKNOWN
 
         // Restore preferences
-        Context ctx = getApplicationContext();
+        Context ctx = DriveSafeApp.getContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 
         Boolean isDrivingForSure = prefs.getBoolean("isDrivingForSure", false);
