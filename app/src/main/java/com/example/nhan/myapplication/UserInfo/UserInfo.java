@@ -5,9 +5,14 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Build;
 
+import com.example.nhan.myapplication.AppPrefs.AppPrefs;
+import com.example.nhan.myapplication.DriveSafeApp;
 import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -29,11 +34,12 @@ public class UserInfo
 
     // check if there's a user_info record that is 'selected' meaning the phone using this user and return it, if there isn't create one and return it
     public static UserInfo init(){
+
         UserInfo returnUser = new UserInfo();
-        DriveSafeProvider dsProvider = new DriveSafeProvider();
+        DriveSafeProvider dsProvider = new DriveSafeProvider(DriveSafeApp.getContext());
 
         Cursor cUserInfo = dsProvider.UserInfoGetSelectedUser();
-        if (cUserInfo.getCount() > 0){
+        if (cUserInfo.getCount() > 0) {
             // there is a selected user so return it
             cUserInfo.moveToFirst();
 
@@ -48,14 +54,19 @@ public class UserInfo
             // no selected users were found, create a new UserInfo and return it
             ContentValues cv = new ContentValues();
             UserInfo newUser = new UserInfo();
+            int countNickName = AppPrefs.GetCountNickName();
+            AppPrefs.SetCountNickName(++countNickName); // increment the count
 
             newUser._AndroidUserId = newUser.getUniquePsuedoID();
-            newUser._NickName = "New User";
+            newUser._NickName = "New User " + countNickName;
             newUser._ActiveUser = 1;
             newUser._Selected = 1;
             newUser._BusinessId = "0";
-            newUser._ValidationCode = "0";
+            newUser._ValidationCode = UUID.randomUUID().toString();
 
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            cv.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID, newUser._AndroidUserId);
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME, newUser._NickName);
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER, newUser._ActiveUser);
@@ -64,8 +75,16 @@ public class UserInfo
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE, newUser._ValidationCode);
 
             long success = dsProvider.InsertRecord(DrivingDataContract.USER_INFO.TABLE_NAME, cv);
-            if (success > 0)
+            if (success > 0) {
                 returnUser = newUser;
+                // set the UserInfo prefs
+                AppPrefs.SetUserInfo(returnUser._ValidationCode);
+            }
+            else
+            {
+                // set the UserInfo prefs
+                AppPrefs.SetUserInfo("");
+            }
         }
 
         cUserInfo.close();  // close cursor

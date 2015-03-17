@@ -62,7 +62,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + DrivingDataContract.USER_INFO.TABLE_NAME;
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 9;
     public static final String DATABASE_NAME = "DRIVE_SAFE_DEV.db";
 
     public DriveSafeDbHelper(Context context) {

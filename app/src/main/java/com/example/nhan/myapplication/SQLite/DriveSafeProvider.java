@@ -17,7 +17,6 @@ public class DriveSafeProvider extends ContentProvider {
 
     private Context mContext;
     DriveSafeDbHelper mDbHelper;
-    //SQLiteDatabase db;
     public DriveSafeProvider(){};
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);

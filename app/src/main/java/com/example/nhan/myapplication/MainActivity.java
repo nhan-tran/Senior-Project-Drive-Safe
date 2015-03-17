@@ -30,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.nhan.myapplication.Enums.RequestType;
 import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
+import com.example.nhan.myapplication.UserInfo.UserInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -77,6 +78,8 @@ public class MainActivity extends FragmentActivity implements
 
     private LocationClient mLocationClient;
 
+    private UserInfo mUserInfo;
+
     // Flag that indicates if a request is underway.
     private boolean mInProgress;
     // activity status
@@ -88,6 +91,14 @@ public class MainActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mInProgress = false;
+
+        // should get back a userInfo that's selected
+        mUserInfo = UserInfo.init();
+        //if (mUserInfo == null)
+        //{
+            // go to something... or log it... should never be null
+        //}
+
 
         mActivityRecognitionClient = new ActivityRecognitionClient(this, this, this);
         Intent intent = new Intent(this, ActivityRecognitionIntentService.class);
@@ -510,7 +521,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     protected void SetIsMonitoring(boolean status){
-        Context ctx = getApplicationContext();
+        Context ctx = DriveSafeApp.getContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor prefsEdit = prefs.edit();
         prefsEdit.putBoolean("isMonitoring", status);
@@ -518,7 +529,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     protected boolean IsMonitoring(){
-        Context ctx = getApplicationContext();
+        Context ctx = DriveSafeApp.getContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean status = prefs.getBoolean("isMonitoring", false);
 
