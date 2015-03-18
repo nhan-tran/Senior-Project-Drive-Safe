@@ -1,6 +1,5 @@
 package com.example.nhan.myapplication.UserInfo;
 
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Build;
@@ -22,7 +21,7 @@ public class UserInfo
 {
     public String _AndroidUserId;
     public String _BusinessId;
-    public String _ValidationCode;
+    public String _MembershipId;
     public int _ActiveUser;
     public int _Selected;
     public String _NickName;
@@ -45,7 +44,7 @@ public class UserInfo
 
             returnUser._AndroidUserId = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID));
             returnUser._BusinessId = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID));
-            returnUser._ValidationCode = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE));
+            returnUser._MembershipId = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID));
             returnUser._ActiveUser = cUserInfo.getInt(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER));
             returnUser._Selected = cUserInfo.getInt(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED));
             returnUser._NickName = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME));
@@ -62,7 +61,7 @@ public class UserInfo
             newUser._ActiveUser = 1;
             newUser._Selected = 1;
             newUser._BusinessId = "0";
-            newUser._ValidationCode = UUID.randomUUID().toString();
+            newUser._MembershipId = UUID.randomUUID().toString();
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
@@ -72,18 +71,18 @@ public class UserInfo
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER, newUser._ActiveUser);
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED, newUser._Selected);
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID, newUser._BusinessId);
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_VALIDATION_CODE, newUser._ValidationCode);
+            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, newUser._MembershipId);
 
             long success = dsProvider.InsertRecord(DrivingDataContract.USER_INFO.TABLE_NAME, cv);
             if (success > 0) {
                 returnUser = newUser;
                 // set the UserInfo prefs
-                AppPrefs.SetUserInfo(returnUser._ValidationCode);
+                AppPrefs.SetMembershipId(returnUser._MembershipId);
             }
             else
             {
                 // set the UserInfo prefs
-                AppPrefs.SetUserInfo("");
+                AppPrefs.SetMembershipId("");
             }
         }
 

@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Location;
 
+import com.example.nhan.myapplication.AppPrefs.AppPrefs;
 import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.location.LocationClient;
@@ -43,7 +44,7 @@ public class LocationUpdatesIntentService extends IntentService {
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE, location.getLatitude());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME, location.getTime());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING, location.getBearing());
-            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, "testUserId");
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, AppPrefs.GetUserMemberId());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, location.getAccuracy());
 
             db.InsertRecord(DrivingDataContract.LOCATION_LOG.TABLE_NAME, values);

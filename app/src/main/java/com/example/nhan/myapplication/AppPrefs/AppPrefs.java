@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.example.nhan.myapplication.DriveSafeApp;
+import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 
 /**
  * Created by Nhan on 3/16/2015.
@@ -16,13 +17,19 @@ public class AppPrefs {
 
     }
 
-   public static void SetUserInfo(String validationId){
+   public static void SetMembershipId(String validationId){
        AppPrefs appPref = new AppPrefs();
        Context ctx = DriveSafeApp.getContext();
        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
        SharedPreferences.Editor prefsEdit = prefs.edit();
-       prefsEdit.putString("userInfo", validationId);
+       prefsEdit.putString(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, validationId);
        prefsEdit.commit(); // commit the edit!
+   }
+
+   public static String GetUserMemberId(){
+       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DriveSafeApp.getContext());
+       String id = prefs.getString(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, "");
+       return id;
    }
 
    public static void SetCountNickName(int count){
