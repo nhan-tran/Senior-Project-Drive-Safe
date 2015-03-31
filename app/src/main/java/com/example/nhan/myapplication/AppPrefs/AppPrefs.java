@@ -9,7 +9,7 @@ import com.example.nhan.myapplication.DriveSafeApp;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 
 /**
- * Created by Nhan on 3/16/2015.
+ * Created by Nhan on 3/16/2015. This class is a common place for the app to get/set its shared prefs through static methods.
  */
 public class AppPrefs {
 
@@ -47,4 +47,33 @@ public class AppPrefs {
        return count;
    }
 
+    public static void SetIsDrivingForSure(boolean value){
+        AppPrefs appPref = new AppPrefs();
+        Context ctx = DriveSafeApp.getContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor prefsEdit = prefs.edit();
+        prefsEdit.putBoolean("isDrivingForSure", value);
+        prefsEdit.commit(); // commit the edit!
+    }
+
+    public static boolean GetIsDrivingForSure(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DriveSafeApp.getContext());
+        boolean forSure = prefs.getBoolean("isDrivingForSure", false);
+        return forSure;
+    }
+
+    public static void SetIsMonitoring(boolean status){
+        Context ctx = DriveSafeApp.getContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor prefsEdit = prefs.edit();
+        prefsEdit.putBoolean("isMonitoring", status);
+        prefsEdit.commit(); // commit the edit!
+    }
+
+    public static boolean GetIsMonitoring(){
+        Context ctx = DriveSafeApp.getContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean status = prefs.getBoolean("isMonitoring", false);
+        return status;
+    }
 }

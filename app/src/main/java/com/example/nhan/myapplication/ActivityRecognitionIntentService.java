@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 
+import com.example.nhan.myapplication.AppPrefs.AppPrefs;
 import com.example.nhan.myapplication.Enums.RequestType;
 import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
@@ -28,7 +29,6 @@ import java.util.Date;
  */
 public class ActivityRecognitionIntentService extends IntentService {
 
-    LocationManager mLocationManager;
     DriveSafeProvider db;
     static final int MIN_CONFIDENCE_LVL = 50;
 
@@ -71,7 +71,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         Context ctx = DriveSafeApp.getContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 
-        Boolean isDrivingForSure = prefs.getBoolean("isDrivingForSure", false);
+        boolean isDrivingForSure = AppPrefs.GetIsDrivingForSure();
 
         // Get the most probable activity
         DetectedActivity newestActivity = result.getMostProbableActivity();
@@ -105,12 +105,7 @@ public class ActivityRecognitionIntentService extends IntentService {
                 // TODO If so, spin up a new async thread to make the request
 
                 isDrivingForSure = true;
-                SharedPreferences.Editor prefsEdit = prefs.edit();
-                prefsEdit.putBoolean("isDrivingForSure", isDrivingForSure);
-                prefsEdit.commit(); // commit the edit!
-
-                //Boolean confirm_isDrivingForSure = prefs.getBoolean("isDrivingForSure", false);
-
+                AppPrefs.SetIsDrivingForSure(isDrivingForSure);
             } else {
                 // either the previous activity was not in_vehicle or we are already isDrivingForSure (so we're already logging)
             }
@@ -120,9 +115,7 @@ public class ActivityRecognitionIntentService extends IntentService {
                 // if the previousActivity was also not in_vehicle then we have detect two activities where it's not in_vehicle so turn off location logging
                 requestor = new LocationRequestor(this, RequestType.STOP);
                 isDrivingForSure = false;
-                SharedPreferences.Editor prefsEdit = prefs.edit();
-                prefsEdit.putBoolean("isDrivingForSure", isDrivingForSure);
-                prefsEdit.commit(); // commit the edit!
+                AppPrefs.SetIsDrivingForSure(isDrivingForSure);
             }
         }
         else {

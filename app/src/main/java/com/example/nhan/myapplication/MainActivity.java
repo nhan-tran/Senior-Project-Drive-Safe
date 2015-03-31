@@ -27,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.nhan.myapplication.AppPrefs.AppPrefs;
 import com.example.nhan.myapplication.Enums.RequestType;
 import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
@@ -114,12 +115,7 @@ public class MainActivity extends FragmentActivity implements
      *
      */
     public void startUpdates() {
-
-        Context ctx = getApplicationContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences.Editor prefsEdit = prefs.edit();
-        prefsEdit.putBoolean("isDrivingForSure", false);
-        prefsEdit.commit(); // commit the edit!
+        AppPrefs.SetIsDrivingForSure(false);
 
         // Set the request type to START
         mRequestType = REQUEST_TYPE.START;
@@ -188,8 +184,6 @@ public class MainActivity extends FragmentActivity implements
             mActivityRecognitionClient.disconnect();
             mActivityRecognitionClient.connect();
         }
-
-        ToggleStartStopButton();
     }
     /*
      * Called when the Activity becomes visible.
@@ -197,7 +191,6 @@ public class MainActivity extends FragmentActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
         ToggleStartStopButton();
     }
 
@@ -206,10 +199,8 @@ public class MainActivity extends FragmentActivity implements
      */
     @Override
     protected void onStop() {
-        // Disconnecting the client invalidates it.
-        //mLocationClient.disconnect();
         super.onStop();
-        SetIsMonitoring(false);
+        //SetIsMonitoring(false);
     }
 
     protected void onDestroy()
@@ -222,7 +213,7 @@ public class MainActivity extends FragmentActivity implements
         // Display the connection status
         switch (mRequestType) {
             case START :
-                SetIsMonitoring(true);
+                AppPrefs.SetIsMonitoring(true);
 
                 Toast.makeText(this, "Connected to Start", Toast.LENGTH_SHORT).show();
                 /*
@@ -235,7 +226,7 @@ public class MainActivity extends FragmentActivity implements
                         mActivityRecognitionPendingIntent);
                 break;
             case STOP :
-                SetIsMonitoring(false);
+               AppPrefs.SetIsMonitoring(false);
 
                 Toast.makeText(this, "Connected to Stop", Toast.LENGTH_SHORT).show();
                 mActivityRecognitionClient.removeActivityUpdates(
@@ -259,6 +250,7 @@ public class MainActivity extends FragmentActivity implements
          */
         mInProgress = false;
         mActivityRecognitionClient.disconnect();
+        ToggleStartStopButton();
     }
 
     /*
@@ -274,7 +266,6 @@ public class MainActivity extends FragmentActivity implements
         mInProgress = false;
         // Delete the client
         mActivityRecognitionClient = null;
-        SetIsMonitoring(false);
     }
 
     /*
@@ -310,7 +301,7 @@ public class MainActivity extends FragmentActivity implements
              */
             showErrorDialog(connectionResult.getErrorCode());
         }
-        SetIsMonitoring(false);
+        AppPrefs.SetIsMonitoring(false);
     }
 
     void showErrorDialog(int code) {
@@ -498,13 +489,14 @@ public class MainActivity extends FragmentActivity implements
         //return true;
     }
 
+    // show or hide start/stop buttons based on the status of the 'isMonitoring' shared prefs
     private void ToggleStartStopButton()
     {
         Button startButton = (Button) findViewById(R.id.btn_activity_status);
         Button stopButton = (Button) findViewById(R.id.btn_stop_updates);
         TextView status = (TextView) findViewById(R.id.textView_status);
 
-        if (IsMonitoring())
+        if (AppPrefs.GetIsMonitoring())
         {
             // show stop button
             startButton.setVisibility(View.GONE);
@@ -518,21 +510,5 @@ public class MainActivity extends FragmentActivity implements
             stopButton.setVisibility(View.GONE);
             status.setText("Monitoring is OFF");
         }
-    }
-
-    protected void SetIsMonitoring(boolean status){
-        Context ctx = DriveSafeApp.getContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences.Editor prefsEdit = prefs.edit();
-        prefsEdit.putBoolean("isMonitoring", status);
-        prefsEdit.commit(); // commit the edit!
-    }
-
-    protected boolean IsMonitoring(){
-        Context ctx = DriveSafeApp.getContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean status = prefs.getBoolean("isMonitoring", false);
-
-        return status;
     }
 }
