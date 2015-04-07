@@ -25,6 +25,7 @@ public class UserInfo
     public int _ActiveUser;
     public int _Selected;
     public String _NickName;
+    public String _GroupId;
 
     public UserInfo(){
 
@@ -61,6 +62,7 @@ public class UserInfo
             newUser._ActiveUser = 1;
             newUser._Selected = 1;
             newUser._BusinessId = "0";
+            newUser._GroupId = "DriveSafe";
             newUser._MembershipId = UUID.randomUUID().toString();
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -72,6 +74,7 @@ public class UserInfo
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED, newUser._Selected);
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID, newUser._BusinessId);
             cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, newUser._MembershipId);
+            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_GROUP_ID, newUser._GroupId);
 
             long success = dsProvider.InsertRecord(DrivingDataContract.USER_INFO.TABLE_NAME, cv);
             if (success > 0) {
