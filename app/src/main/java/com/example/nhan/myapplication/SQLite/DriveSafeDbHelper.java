@@ -39,6 +39,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
                     DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER + INT_TYPE + COMMA_SEP +
                     DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.USER_INFO.COLUMN_NAME_SYNCED + INT_TYPE + COMMA_SEP +
                     DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED + INT_TYPE +
                     " )";
     private static final String SQL_CREATE_TBL_SESSION_ACTIVITIES =
@@ -62,7 +63,7 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + DrivingDataContract.USER_INFO.TABLE_NAME;
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 10;
+    public static final int DATABASE_VERSION = 11;
     public static final String DATABASE_NAME = "DRIVE_SAFE_DEV.db";
 
     public DriveSafeDbHelper(Context context) {

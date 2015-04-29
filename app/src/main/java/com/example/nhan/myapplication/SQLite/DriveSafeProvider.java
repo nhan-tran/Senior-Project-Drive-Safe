@@ -56,6 +56,19 @@ public class DriveSafeProvider extends ContentProvider {
         db.close();
     }
 
+    // updates a specific record in User_Info that matches @_id
+    public void UpdateUserInfoRecord(ContentValues values, String _id){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int rowsAffected = 0;
+        if (values != null){
+            // Insert the new row, returning the primary key value of the new row
+            rowsAffected = db.update(DrivingDataContract.USER_INFO.TABLE_NAME, values, "_ID = " + _id, null );
+        }
+        db.close();
+    }
+
+
+
     public Cursor GetLatestSessionActivities()
     {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -86,6 +99,10 @@ public class DriveSafeProvider extends ContentProvider {
 
         return newRowId;
     }
+
+    /*
+    CONTENT PROVIDER METHODS
+     */
 
     @Override
     public boolean onCreate() {

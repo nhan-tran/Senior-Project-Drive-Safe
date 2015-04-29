@@ -23,6 +23,7 @@ public class DrivingDataContract {
         public static final String COLUMN_NAME_ACTIVE_USER = "ACTIVE_USER";
         public static final String COLUMN_NAME_SELECTED = "SELECTED";
         public static final String COLUMN_NAME_NICK_NAME = "NICK_NAME";
+        public static final String COLUMN_NAME_SYNCED = "SYNCED";
     }
 
     public static abstract class LOCATION_LOG implements BaseColumns{

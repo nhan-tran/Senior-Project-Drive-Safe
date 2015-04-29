@@ -2,12 +2,24 @@ package com.example.nhan.myapplication.UserInfo;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.nhan.myapplication.AppPrefs.AppPrefs;
 import com.example.nhan.myapplication.DriveSafeApp;
+import com.example.nhan.myapplication.SQLite.DriveSafeDbHelper;
 import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,6 +55,7 @@ public class UserInfo
             // there is a selected user so return it
             cUserInfo.moveToFirst();
 
+            returnUser = new UserInfo();    // init the returnUser
             returnUser._AndroidUserId = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID));
             returnUser._BusinessId = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID));
             returnUser._MembershipId = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID));
@@ -51,33 +64,9 @@ public class UserInfo
             returnUser._NickName = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME));
         }
         else {
-            // no selected users were found, create a new UserInfo and return it
-            ContentValues cv = new ContentValues();
-            UserInfo newUser = new UserInfo();
-            int countNickName = AppPrefs.GetCountNickName();
-            AppPrefs.SetCountNickName(++countNickName); // increment the count
-
-            newUser._AndroidUserId = newUser.getUniquePsuedoID();
-            newUser._NickName = "New User " + countNickName;
-            newUser._ActiveUser = 1;
-            newUser._Selected = 1;
-            newUser._BusinessId = "0";
-            newUser._GroupId = "DriveSafe";
-            newUser._MembershipId = UUID.randomUUID().toString();
-
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
-            cv.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID, newUser._AndroidUserId);
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME, newUser._NickName);
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER, newUser._ActiveUser);
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED, newUser._Selected);
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID, newUser._BusinessId);
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, newUser._MembershipId);
-            cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_GROUP_ID, newUser._GroupId);
-
-            long success = dsProvider.InsertRecord(DrivingDataContract.USER_INFO.TABLE_NAME, cv);
-            if (success > 0) {
+            // no selected users were found, create a new UserInfo and return it if successful
+            UserInfo newUser = UserInfo.CreateUser(null, "DRVSF", "10", 0);
+            if (newUser != null) {
                 returnUser = newUser;
                 // set the UserInfo prefs
                 AppPrefs.SetMembershipId(returnUser._MembershipId);
@@ -93,6 +82,121 @@ public class UserInfo
 
         return returnUser;
     }
+
+    public static UserInfo CreateUser(String nickName, String businessId, String groupId, int selected)
+    {
+        DriveSafeProvider dsProvider = new DriveSafeProvider(DriveSafeApp.getContext());
+        ContentValues cv = new ContentValues();
+        UserInfo newUser = new UserInfo();
+
+        if (nickName == null)
+        {
+            int countNickName = AppPrefs.GetCountNickName();
+            AppPrefs.SetCountNickName(++countNickName); // increment the count
+
+            nickName = "New User " + countNickName;
+        }
+
+        newUser._AndroidUserId = newUser.getUniquePsuedoID();
+        newUser._NickName = nickName;
+        newUser._ActiveUser = 1;
+        newUser._Selected = selected;
+        newUser._BusinessId = businessId;
+        newUser._GroupId = groupId;
+        newUser._MembershipId = UUID.randomUUID().toString();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        cv.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_CREATED_DATE, dateFormat.format(date));
+        cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID, newUser._AndroidUserId);
+        cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME, newUser._NickName);
+        cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER, newUser._ActiveUser);
+        cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED, newUser._Selected);
+        cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID, newUser._BusinessId);
+        cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, newUser._MembershipId);
+        cv.put(DrivingDataContract.USER_INFO.COLUMN_NAME_GROUP_ID, newUser._GroupId);
+
+        long success = dsProvider.InsertRecord(DrivingDataContract.USER_INFO.TABLE_NAME, cv);
+        if (success > 0)
+        {
+            // new user created - fire off the syncing of all unsynced users
+            SyncUserInfo();
+            return newUser;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static Boolean SyncUserInfo(){
+        int syncSuccess = 0;
+        DriveSafeDbHelper mDbHelper = new DriveSafeDbHelper(DriveSafeApp.getContext());
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor mCursor = db.rawQuery("select * from "  + DrivingDataContract.USER_INFO.TABLE_NAME +
+                " where " + DrivingDataContract.USER_INFO.COLUMN_NAME_SYNCED + " is null ", new String[]{});
+
+        JSONObject jsonObj = new JSONObject();
+
+        mCursor.moveToFirst();
+
+        while (!mCursor.isAfterLast()) {
+            String createdDate = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_CREATED_DATE));
+            String android_user_id = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID));
+            String business_id = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_BUSINESS_ID));
+            String group_id = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_GROUP_ID));
+            String membership_id = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID));
+            int active_user = mCursor.getInt(mCursor.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER));
+            String nick_name = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME));
+
+            try {
+                jsonObj.put("createddate", createdDate.toString());
+                jsonObj.put("android_user_id", android_user_id);
+                jsonObj.put("business_id", business_id);
+                jsonObj.put("group_id", group_id);
+                jsonObj.put("membership_id", membership_id);
+                jsonObj.put("active_user", active_user);
+                jsonObj.put("nickname", nick_name);
+
+                RequestQueue queue = Volley.newRequestQueue(DriveSafeApp.getContext());  // this = context
+                String url = "http://drivesafe-dev.azurewebsites.net/api/AndroidUserInfoSync";
+
+                JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObj, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        DriveSafeProvider db = new DriveSafeProvider(DriveSafeApp.getContext());
+                        Log.i("volley", "response: " + response);
+
+                        String _id = "0";
+                        try {
+                            _id = response.getString("ID");
+                        }
+                        catch (Exception e){
+                            Log.d("Reponse JSON error", "JSON error i onRepsonse");
+                        }
+                        ContentValues cv = new ContentValues();
+                        cv.put("SYNCED", 1);
+                        db.UpdateLogRecord(cv, _id);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("volley", "error: " + error);
+                    }
+                });
+                queue.add(postRequest);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                syncSuccess = (syncSuccess == -1) ? syncSuccess : -1;
+            }
+
+            mCursor.moveToNext();
+        }   // while
+
+        return true;
+    }
+
+
 
     /**
      * Return pseudo unique ID
