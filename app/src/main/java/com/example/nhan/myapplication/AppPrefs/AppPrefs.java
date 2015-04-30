@@ -27,10 +27,25 @@ public class AppPrefs {
    }
 
    public static String GetUserMemberId(){
-       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DriveSafeApp.getContext());
-       String id = prefs.getString(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, "");
-       return id;
-   }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DriveSafeApp.getContext());
+        String id = prefs.getString(DrivingDataContract.USER_INFO.COLUMN_NAME_MEMBERSHIP_ID, "");
+        return id;
+    }
+
+    public static void SetAndroidId(String androidId){
+        AppPrefs appPref = new AppPrefs();
+        Context ctx = DriveSafeApp.getContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor prefsEdit = prefs.edit();
+        prefsEdit.putString(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID, androidId);
+        prefsEdit.commit(); // commit the edit!
+    }
+
+    public static String GetAndroidId(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DriveSafeApp.getContext());
+        String id = prefs.getString(DrivingDataContract.USER_INFO.COLUMN_NAME_ANDROID_USER_ID, "");
+        return id;
+    }
 
    public static void SetCountNickName(int count){
        AppPrefs appPref = new AppPrefs();

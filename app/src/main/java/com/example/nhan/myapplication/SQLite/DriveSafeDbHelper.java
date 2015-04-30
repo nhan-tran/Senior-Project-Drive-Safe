@@ -24,7 +24,8 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE + REAL_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE + REAL_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME + TEXT_TYPE + COMMA_SEP +
-                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ANDROID_ID + TEXT_TYPE + COMMA_SEP +
+                    DrivingDataContract.LOCATION_LOG.COLUMN_NAME_MEMBERSHIP_ID + TEXT_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED + INT_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING + REAL_TYPE + COMMA_SEP +
                     DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY + REAL_TYPE +
@@ -63,21 +64,21 @@ public class DriveSafeDbHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + DrivingDataContract.USER_INFO.TABLE_NAME;
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 11;
+    public static final int DATABASE_VERSION = 12;
     public static final String DATABASE_NAME = "DRIVE_SAFE_DEV.db";
 
     public DriveSafeDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase db) {
-        //db.execSQL(SQL_CREATE_TBL_LOCATION_LOG);
+        db.execSQL(SQL_CREATE_TBL_LOCATION_LOG);
         db.execSQL(SQL_CREATE_TBL_SESSION_ACTIVITIES);
         db.execSQL(SQL_CREATE_TBL_USER_INFO);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        // db.execSQL(SQL_DELETE_TBL_LOCATION_LOG);
+        db.execSQL(SQL_DELETE_TBL_LOCATION_LOG);
         db.execSQL(SQL_DELETE_TBL_SESSION_ACTIVITIES);
         db.execSQL(SQL_DELETE_TBL_USER_INFO);
         onCreate(db);

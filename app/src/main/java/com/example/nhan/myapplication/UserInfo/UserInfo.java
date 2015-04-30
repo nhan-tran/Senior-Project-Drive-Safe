@@ -62,6 +62,10 @@ public class UserInfo
             returnUser._ActiveUser = cUserInfo.getInt(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_ACTIVE_USER));
             returnUser._Selected = cUserInfo.getInt(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_SELECTED));
             returnUser._NickName = cUserInfo.getString(cUserInfo.getColumnIndex(DrivingDataContract.USER_INFO.COLUMN_NAME_NICK_NAME));
+
+            // set the UserInfo prefs
+            AppPrefs.SetMembershipId(returnUser._MembershipId);
+            AppPrefs.SetAndroidId(returnUser._AndroidUserId);
         }
         else {
             // no selected users were found, create a new UserInfo and return it if successful
@@ -70,11 +74,13 @@ public class UserInfo
                 returnUser = newUser;
                 // set the UserInfo prefs
                 AppPrefs.SetMembershipId(returnUser._MembershipId);
+                AppPrefs.SetAndroidId(returnUser._AndroidUserId);
             }
             else
             {
                 // set the UserInfo prefs
                 AppPrefs.SetMembershipId("");
+                AppPrefs.SetAndroidId("");
             }
         }
 
