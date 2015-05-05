@@ -430,7 +430,7 @@ public class MainActivity extends FragmentActivity implements
             Double latitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE));
             Double longitude = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LONGITUDE));
             Long locationTime = mCursor.getLong(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME));
-            String userId = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID));
+            //String userId = mCursor.getString(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID));
             int sync = mCursor.getInt(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED));
             Double bearing = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING));
             Double accuracy = mCursor.getDouble(mCursor.getColumnIndex(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY));
@@ -442,7 +442,7 @@ public class MainActivity extends FragmentActivity implements
                 jsonObj.put("Latitude", latitude);
                 jsonObj.put("Longitude", longitude);
                 jsonObj.put("Location_Time", locationTime);
-                jsonObj.put("User_Id", userId);
+                //jsonObj.put("User_Id", userId);
                 jsonObj.put("Synced", sync);
                 jsonObj.put("Bearing", bearing);
                 jsonObj.put("Accuracy", accuracy);

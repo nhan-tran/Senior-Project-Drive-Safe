@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.nhan.myapplication.AppPrefs.AppPrefs;
 import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 import com.google.android.gms.common.ConnectionResult;
@@ -88,7 +89,8 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LATITUDE, currentLocation.getLatitude());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME, currentLocation.getTime());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING, currentLocation.getBearing());
-            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_USER_ID, "testUserId");
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ANDROID_ID, AppPrefs.GetAndroidId());
+            values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_MEMBERSHIP_ID, AppPrefs.GetUserMemberId());
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED, 0);
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, currentLocation.getAccuracy());
 
