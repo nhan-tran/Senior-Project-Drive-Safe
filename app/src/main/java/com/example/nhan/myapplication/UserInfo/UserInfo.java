@@ -173,16 +173,16 @@ public class UserInfo
                         DriveSafeProvider db = new DriveSafeProvider(DriveSafeApp.getContext());
                         Log.i("volley", "response: " + response);
 
-                        String _id = "0";
+                        String membershipId = "0";
                         try {
-                            _id = response.getString("ID");
+                            membershipId = response.getString("Membership_Id");
                         }
                         catch (Exception e){
                             Log.d("Reponse JSON error", "JSON error i onRepsonse");
                         }
                         ContentValues cv = new ContentValues();
                         cv.put("SYNCED", 1);
-                        db.UpdateLogRecord(cv, _id);
+                        db.UpdateUserInfoRecord(cv, membershipId);
                     }
                 }, new Response.ErrorListener() {
                     @Override
