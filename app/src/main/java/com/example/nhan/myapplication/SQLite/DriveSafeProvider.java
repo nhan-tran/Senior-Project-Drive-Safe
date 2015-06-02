@@ -86,6 +86,17 @@ public class DriveSafeProvider extends ContentProvider {
         return cursor;
     }
 
+    public Long GetLatestLocationLogID(){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select _id from "  + DrivingDataContract.LOCATION_LOG.TABLE_NAME +
+                " order by _id desc limit 1", new String[]{} );
+
+        cursor.moveToFirst();
+        Long _ID = cursor.getLong(cursor.getColumnIndex(DrivingDataContract.LOCATION_LOG._ID));
+
+        return _ID;
+    }
+
     // Insert a record into the Drive_Safe.db with the @values
     public long InsertRecord(String table, ContentValues values)
     {

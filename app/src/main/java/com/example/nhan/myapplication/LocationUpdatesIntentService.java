@@ -3,11 +3,8 @@ package com.example.nhan.myapplication;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.location.Location;
-import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -62,6 +59,7 @@ public class LocationUpdatesIntentService extends IntentService {
             values.put(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY, location.getAccuracy());
 
             db.InsertRecord(DrivingDataContract.LOCATION_LOG.TABLE_NAME, values);
+            SyncToWeb(values);  // please work!
         }
     }
 
@@ -77,10 +75,10 @@ public class LocationUpdatesIntentService extends IntentService {
         Long locationTime = values.getAsLong(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_LOCATION_TIME);
         String androidId = values.getAsString(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ANDROID_ID);
         String membershipId = values.getAsString(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_MEMBERSHIP_ID);
-        int sync = values.getAsInteger(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_SYNCED);
+        int sync = 0;
         Double bearing = values.getAsDouble(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_BEARING);
         Double accuracy = values.getAsDouble(DrivingDataContract.LOCATION_LOG.COLUMN_NAME_ACCURACY);
-        Long _ID = values.getAsLong(DrivingDataContract.LOCATION_LOG._ID);
+        Long _ID = AppPrefs.GetLatestLocationLogID();
 
         try {
             jsonObj.put("Created_Date", createdDate.toString());

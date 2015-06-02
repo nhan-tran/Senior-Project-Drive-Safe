@@ -1,11 +1,11 @@
 package com.example.nhan.myapplication.AppPrefs;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.example.nhan.myapplication.DriveSafeApp;
+import com.example.nhan.myapplication.SQLite.DriveSafeProvider;
 import com.example.nhan.myapplication.SQLite.DrivingDataContract;
 
 /**
@@ -61,6 +61,12 @@ public class AppPrefs {
        int count = prefs.getInt("countNickName", 1);
        return count;
    }
+
+    public static Long GetLatestLocationLogID(){
+        DriveSafeProvider db = new DriveSafeProvider(DriveSafeApp.getContext());
+        Long nextID = db.GetLatestLocationLogID();
+        return nextID;
+    }
 
     public static void SetIsDrivingForSure(boolean value){
         AppPrefs appPref = new AppPrefs();
